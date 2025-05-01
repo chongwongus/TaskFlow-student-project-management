@@ -9,7 +9,11 @@ This repository contains our group project for TCSS 506 Web Development Course. 
 - Jannine G. D. MacGormain
 
 ## Project Description
-[Brief description of your application, its purpose, and core functionality]
+The TaskFlow will be a standalone web application developed as a course project.
+The project aims to collaboratively plan, design, and deploy a web application while applying the MVC (Model-View-Controller) design pattern and other design methodologies to enhance the project's modularity.
+The application will utilize MongoDB for database management, React Typescript for frontend development, the Flask Python web application framework for development, and will be deployed on Amazon Web Services (AWS). It will incorporate external APIs to enhance user experience, such as accessing GitHub’s API for repository information.
+The TaskFlow application will be containerized using Docker for efficient deployment.
+The app will track project progress, task completion, and team collaboration, allowing users to create and manage projects, assign tasks to team members, and monitor deadlines through an intuitive interface.
 
 ## Features
 - **User Authentication System**: Complete login/registration functionality with secure session management
