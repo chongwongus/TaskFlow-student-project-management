@@ -1,5 +1,5 @@
 import React from 'react';
-import './LandingPage.css';
+import './LandingPage.scss';
 
 interface FeatureCardProps {
   icon: string;
