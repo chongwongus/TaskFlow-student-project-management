@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import { useParams } from 'react-router-dom';
+import ProjectList from './ProjectList';
+import ProjectDetail from './ProjectDetail';
+import './ProjectBoard.scss';
 
-import "./ProjectBoard.scss";
+const ProjectBoard: React.FC = () => {
+  const { id } = useParams<{ id: string }>();
+  
+  if (id) {
+    // If we have a project ID, show the project detail view
+    return <ProjectDetail projectId={id} />;
+  }
+  
+  // Otherwise show the project list
+  return <ProjectList />;
+};
 
-export default function ProjectBoard() {
-    return (
-        <div className="board">
-            <form id="id-form">
-                <input type="text" placeholder="Project Name" />
-                <button className="submit-button">
-                    Add +
-                </button>
-            </form>
-        </div>
-    )
-}
+export default ProjectBoard;

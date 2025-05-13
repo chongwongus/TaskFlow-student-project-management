@@ -1,4 +1,5 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
+import { authService } from '../services/api';
 
 // Define types
 interface User {
@@ -13,7 +14,9 @@ interface AuthContextType {
   loading: boolean;
   error: string | null;
   isAuthenticated: boolean;
-  login: (token: string) => Promise<void>;
+  login: (email: string, password: string) => Promise<void>;
+  googleLogin: (tokenId: string) => Promise<void>;
+  register: (name: string, email: string, password: string) => Promise<void>;
   logout: () => void;
 }
 
@@ -24,6 +27,8 @@ const AuthContext = createContext<AuthContextType>({
   error: null,
   isAuthenticated: false,
   login: async () => {},
+  googleLogin: async () => {},
+  register: async () => {},
   logout: () => {},
 });
 
@@ -42,31 +47,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   // Check if user is logged in when component mounts
   useEffect(() => {
     const checkUserLoggedIn = async () => {
-      const token = localStorage.getItem('authToken');
+      const token = localStorage.getItem('token');
       
       if (token) {
         try {
-          // In a real app, you would verify this token with your backend
-          // For now, we'll simulate by parsing the JWT token
-          // In production, NEVER rely on client-side validation alone
-          const parseJwt = (token: string) => {
-            const base64Url = token.split('.')[1];
-            const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-            return JSON.parse(window.atob(base64));
-          };
-          
-          const userData = parseJwt(token);
-          
-          // Set user data from token
-          setUser({
-            id: userData.sub,
-            name: userData.name,
-            email: userData.email,
-            picture: userData.picture,
-          });
+          const response = await authService.getProfile();
+          setUser(response.data.data);
         } catch (err) {
-          console.error('Error parsing token:', err);
-          localStorage.removeItem('authToken');
+          console.error('Error fetching user:', err);
+          localStorage.removeItem('token');
           setError('Session expired. Please login again.');
         }
       }
@@ -78,37 +67,56 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   }, []);
 
   // Login function
-  const login = async (token: string) => {
+  const login = async (email: string, password: string) => {
     try {
-      localStorage.setItem('authToken', token);
-      
-      // In a real app, you would verify this token with your backend
-      // and get user data from there
-      const parseJwt = (token: string) => {
-        const base64Url = token.split('.')[1];
-        const base64 = base64Url.replace(/-/g, '+').replace(/_/g, '/');
-        return JSON.parse(window.atob(base64));
-      };
-      
-      const userData = parseJwt(token);
-      
-      setUser({
-        id: userData.sub,
-        name: userData.name,
-        email: userData.email,
-        picture: userData.picture,
-      });
-      
       setError(null);
-    } catch (err) {
+      const response = await authService.login({ email, password });
+      const { token, user } = response.data;
+      
+      localStorage.setItem('token', token);
+      setUser(user);
+    } catch (err: any) {
       console.error('Login error:', err);
-      setError('Failed to login. Please try again.');
+      setError(err.response?.data?.message || 'Failed to login. Please try again.');
+      throw err;
+    }
+  };
+
+  // Google login function
+  const googleLogin = async (tokenId: string) => {
+    try {
+      setError(null);
+      const response = await authService.googleLogin(tokenId);
+      const { token, user } = response.data;
+      
+      localStorage.setItem('token', token);
+      setUser(user);
+    } catch (err: any) {
+      console.error('Google login error:', err);
+      setError(err.response?.data?.message || 'Failed to login with Google. Please try again.');
+      throw err;
+    }
+  };
+
+  // Register function
+  const register = async (name: string, email: string, password: string) => {
+    try {
+      setError(null);
+      const response = await authService.register({ name, email, password });
+      const { token, user } = response.data;
+      
+      localStorage.setItem('token', token);
+      setUser(user);
+    } catch (err: any) {
+      console.error('Registration error:', err);
+      setError(err.response?.data?.message || 'Failed to register. Please try again.');
+      throw err;
     }
   };
 
   // Logout function
   const logout = () => {
-    localStorage.removeItem('authToken');
+    localStorage.removeItem('token');
     setUser(null);
   };
 
@@ -120,6 +128,8 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         error,
         isAuthenticated: !!user,
         login,
+        googleLogin,
+        register,
         logout,
       }}
     >

@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import GoogleAuthButton from '../../components/Auth/GoogleAuthButton';
+import { authService } from '../../services/api';
 import './Auth.scss';
 
 const Register: React.FC = () => {
@@ -12,8 +13,9 @@ const Register: React.FC = () => {
     confirmPassword: '',
     agreeTerms: false
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
   const [errors, setErrors] = useState<{[key: string]: string}>({});
-  const { login, error: authError } = useAuth();
+  const { register, error: authError } = useAuth();
   const navigate = useNavigate();
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -59,17 +61,25 @@ const Register: React.FC = () => {
     e.preventDefault();
     
     if (validateForm()) {
-      // In a real app, you would make an API call to register
-      // For now, we'll just simulate a successful registration
-      
-      // This is a placeholder - in a real app you would get a token after registration
-      const mockToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI5ODc2NTQzMjEiLCJuYW1lIjoiTmV3IFVzZXIiLCJlbWFpbCI6Im5ld3VzZXJAdGVzdC5jb20iLCJpYXQiOjE1MTYyMzkwMjJ9.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
-      
       try {
-        await login(mockToken);
+        setIsSubmitting(true);
+        
+        // Register using the API service
+        const userData = {
+          name: formData.name,
+          email: formData.email,
+          password: formData.password
+        };
+        
+        // Use the register function from AuthContext
+        await register(formData.name, formData.email, formData.password);
+        
+        // Redirect to projects page after successful registration
         navigate('/projects');
       } catch (err) {
         console.error('Registration error:', err);
+      } finally {
+        setIsSubmitting(false);
       }
     }
   };
@@ -102,6 +112,7 @@ const Register: React.FC = () => {
               value={formData.name}
               onChange={handleChange}
               className={errors.name ? 'input-error' : ''}
+              disabled={isSubmitting}
             />
             {errors.name && <div className="error-message">{errors.name}</div>}
           </div>
@@ -116,6 +127,7 @@ const Register: React.FC = () => {
               value={formData.email}
               onChange={handleChange}
               className={errors.email ? 'input-error' : ''}
+              disabled={isSubmitting}
             />
             {errors.email && <div className="error-message">{errors.email}</div>}
           </div>
@@ -130,6 +142,7 @@ const Register: React.FC = () => {
               value={formData.password}
               onChange={handleChange}
               className={errors.password ? 'input-error' : ''}
+              disabled={isSubmitting}
             />
             {errors.password && <div className="error-message">{errors.password}</div>}
             <div className="password-requirements">
@@ -147,6 +160,7 @@ const Register: React.FC = () => {
               value={formData.confirmPassword}
               onChange={handleChange}
               className={errors.confirmPassword ? 'input-error' : ''}
+              disabled={isSubmitting}
             />
             {errors.confirmPassword && <div className="error-message">{errors.confirmPassword}</div>}
           </div>
@@ -159,6 +173,7 @@ const Register: React.FC = () => {
                 name="agreeTerms"
                 checked={formData.agreeTerms}
                 onChange={handleChange}
+                disabled={isSubmitting}
               />
               <label htmlFor="agreeTerms">
                 I agree to the <Link to="/terms" className="auth-link">Terms of Service</Link> and <Link to="/privacy" className="auth-link">Privacy Policy</Link>
@@ -167,7 +182,13 @@ const Register: React.FC = () => {
             {errors.agreeTerms && <div className="error-message">{errors.agreeTerms}</div>}
           </div>
           
-          <button type="submit" className="auth-button">Create Account</button>
+          <button 
+            type="submit" 
+            className="auth-button"
+            disabled={isSubmitting}
+          >
+            {isSubmitting ? 'Creating Account...' : 'Create Account'}
+          </button>
           
           <div className="auth-divider">
             <span>or</span>

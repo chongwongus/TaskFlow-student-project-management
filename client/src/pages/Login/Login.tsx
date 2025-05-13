@@ -10,7 +10,7 @@ const Login: React.FC = () => {
     password: '',
     rememberMe: false
   });
-  const [errors, setErrors] = useState<{[key: string]: string}>({});
+  const [formErrors, setFormErrors] = useState<{[key: string]: string}>({});
   const { login, error: authError } = useAuth();
   const navigate = useNavigate();
 
@@ -35,7 +35,7 @@ const Login: React.FC = () => {
       newErrors.password = 'Password is required';
     }
     
-    setErrors(newErrors);
+    setFormErrors(newErrors);
     return Object.keys(newErrors).length === 0;
   };
 
@@ -43,23 +43,19 @@ const Login: React.FC = () => {
     e.preventDefault();
     
     if (validateForm()) {
-      // In a real app, you would make an API call to authenticate
-      // For now, we'll just simulate a successful login
-      
-      // This is a placeholder - in a real app you would get a token from your backend
-      const mockToken = "eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiIxMjM0NTY3ODkwIiwibmFtZSI6IlRlc3QgVXNlciIsImVtYWlsIjoiZXhhbXBsZUB0ZXN0LmNvbSIsImlhdCI6MTUxNjIzOTAyMn0.SflKxwRJSMeKKF2QT4fwpMeJf36POk6yJV_adQssw5c";
-      
       try {
-        await login(mockToken);
+        await login(formData.email, formData.password);
         navigate('/projects');
       } catch (err) {
         console.error('Login error:', err);
+        // Error is handled by the auth context
       }
     }
   };
 
   return (
     <div className="auth-container">
+      {/* Rest of your component remains the same */}
       <div className="auth-card">
         <div className="back-to-home">
           <Link to="/" className="back-link">
@@ -85,9 +81,9 @@ const Login: React.FC = () => {
               placeholder="Enter your email"
               value={formData.email}
               onChange={handleChange}
-              className={errors.email ? 'input-error' : ''}
+              className={formErrors.email ? 'input-error' : ''}
             />
-            {errors.email && <div className="error-message">{errors.email}</div>}
+            {formErrors.email && <div className="error-message">{formErrors.email}</div>}
           </div>
           
           <div className="form-group">
@@ -99,9 +95,9 @@ const Login: React.FC = () => {
               placeholder="Enter your password"
               value={formData.password}
               onChange={handleChange}
-              className={errors.password ? 'input-error' : ''}
+              className={formErrors.password ? 'input-error' : ''}
             />
-            {errors.password && <div className="error-message">{errors.password}</div>}
+            {formErrors.password && <div className="error-message">{formErrors.password}</div>}
           </div>
           
           <div className="form-options">

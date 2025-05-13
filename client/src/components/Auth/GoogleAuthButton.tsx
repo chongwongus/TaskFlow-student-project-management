@@ -1,10 +1,12 @@
 import React from 'react';
 import { GoogleLogin } from '@react-oauth/google';
 import { useAuth } from '../../context/AuthContext';
-import './Auth.scss'; // Now this will reference the file in the same directory
+import { useNavigate } from 'react-router-dom';
+import './Auth.scss';
 
 const GoogleAuthButton: React.FC = () => {
-  const { login } = useAuth();
+  const { googleLogin } = useAuth();
+  const navigate = useNavigate();
 
   const handleSuccess = async (credentialResponse: any) => {
     try {
@@ -14,13 +16,9 @@ const GoogleAuthButton: React.FC = () => {
         return;
       }
 
-      // In a production app, you would send this token to your backend
-      // where it would be verified with Google and used to create/update a user
-      // For now, we'll just use the token directly
-      
-      // Save the token and update auth context
-      await login(token);
-
+      // Use the token with our backend
+      await googleLogin(token);
+      navigate('/projects');
     } catch (error) {
       console.error('Google auth error:', error);
     }
