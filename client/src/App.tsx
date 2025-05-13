@@ -1,17 +1,29 @@
-import React from 'react';
+import React, { ReactNode } from 'react';
 import './App.css';
-import { RouterProvider } from 'react-router-dom';
-import { router } from './pages/router';
+import Header from './components/Header/Header';
+import { AuthProvider } from './context/AuthContext';
+import { GoogleOAuthProvider } from '@react-oauth/google';
 
-const App: React.FC = () => {
+// Google OAuth Client ID - replace with your actual client ID
+const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID";
+
+// Define prop types with children
+interface AppProps {
+  children?: ReactNode;
+}
+
+const App: React.FC<AppProps> = ({ children }) => {
   return (
-    <div className="App">
-      <div className="app-body">
-        <div className="app-main-content">
-          <RouterProvider router={router} />
+    <GoogleOAuthProvider clientId={googleClientId}>
+      <AuthProvider>
+        <div className="app">
+          <Header />
+          <main className="app-main">
+            {children}
+          </main>
         </div>
-      </div>
-    </div>
+      </AuthProvider>
+    </GoogleOAuthProvider>
   );
 };
 

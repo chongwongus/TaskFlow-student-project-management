@@ -1,12 +1,12 @@
 import React, { createContext, useState, useContext, useEffect, ReactNode } from 'react';
 import { authService } from '../services/api';
 
-// Define types
+// Define User interface with proper properties
 interface User {
   id: string;
   name: string;
   email: string;
-  picture?: string;
+  picture?: string; // Use 'picture' instead of 'avatar' to match Google OAuth response
 }
 
 interface AuthContextType {

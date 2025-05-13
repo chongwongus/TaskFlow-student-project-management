@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Header.scss';
@@ -6,11 +6,21 @@ import './Header.scss';
 const Header: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const location = useLocation();
+  const [menuOpen, setMenuOpen] = useState(false);
   
   // Don't show header on landing page
   if (location.pathname === '/') {
     return null;
   }
+
+  const toggleMenu = () => {
+    setMenuOpen(!menuOpen);
+  };
+
+  const handleLogout = () => {
+    logout();
+    setMenuOpen(false);
+  };
 
   return (
     <header className="app-header">
@@ -31,7 +41,8 @@ const Header: React.FC = () => {
                 Projects
               </Link>
               <div className="profile-dropdown">
-                <div className="profile-trigger">
+                <div className="profile-trigger" onClick={toggleMenu}>
+                  {/* Use picture property instead of avatar */}
                   {user?.picture ? (
                     <img 
                       src={user.picture} 
@@ -40,21 +51,23 @@ const Header: React.FC = () => {
                     />
                   ) : (
                     <div className="profile-avatar-placeholder">
-                      {user?.name.charAt(0)}
+                      {user?.name?.charAt(0) || 'U'}
                     </div>
                   )}
                 </div>
-                <div className="profile-menu">
-                  <div className="profile-header">
-                    <div className="profile-name">{user?.name}</div>
-                    <div className="profile-email">{user?.email}</div>
+                {menuOpen && (
+                  <div className="profile-menu">
+                    <div className="profile-header">
+                      <div className="profile-name">{user?.name || 'User'}</div>
+                      <div className="profile-email">{user?.email || ''}</div>
+                    </div>
+                    <div className="profile-actions">
+                      <button onClick={handleLogout} className="logout-button">
+                        Logout
+                      </button>
+                    </div>
                   </div>
-                  <div className="profile-actions">
-                    <button onClick={logout} className="logout-button">
-                      Logout
-                    </button>
-                  </div>
-                </div>
+                )}
               </div>
             </>
           ) : (
