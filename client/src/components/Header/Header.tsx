@@ -1,18 +1,16 @@
 import React, { useState } from 'react';
-import { Link, useLocation } from 'react-router-dom';
+import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Header.scss';
 
 const Header: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
   const location = useLocation();
+  const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   
-  // Don't show header on landing page
-  if (location.pathname === '/') {
-    return null;
-  }
-
+  // Always show the header now
+  
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
@@ -20,15 +18,39 @@ const Header: React.FC = () => {
   const handleLogout = () => {
     logout();
     setMenuOpen(false);
+    navigate('/'); // Redirect to landing page after logout
+  };
+
+  // Function to determine if we're on a project detail page
+  const isProjectDetailPage = () => {
+    // Check if we're on a project page, but not on the main projects list
+    return location.pathname.includes('/projects/') && 
+           location.pathname !== '/projects' && 
+           !location.pathname.includes('/new');
+  };
+
+  // Function to get back to projects list
+  const getBackToProjectsLink = () => {
+    return (
+      <Link to="/projects" className="nav-link back-to-projects">
+        <span className="back-icon">←</span> Back to Projects
+      </Link>
+    );
   };
 
   return (
     <header className="app-header">
       <div className="header-content">
-        <div className="header-logo">
-          <Link to={isAuthenticated ? '/projects' : '/'} className="logo-link">
-            TaskFlow
-          </Link>
+        <div className="header-logo-section">
+          {/* Always show the TaskFlow logo */}
+          <div className="header-logo">
+            <Link to={isAuthenticated ? '/projects' : '/'} className="logo-link">
+              TaskFlow
+            </Link>
+          </div>
+          
+          {/* Show back button on project detail pages */}
+          {isAuthenticated && isProjectDetailPage() && getBackToProjectsLink()}
         </div>
         
         <nav className="header-nav">
@@ -40,9 +62,17 @@ const Header: React.FC = () => {
               >
                 Projects
               </Link>
+              
+              {/* Add a visible logout button */}
+              <button 
+                onClick={handleLogout}
+                className="logout-button-visible"
+              >
+                Logout
+              </button>
+              
               <div className="profile-dropdown">
                 <div className="profile-trigger" onClick={toggleMenu}>
-                  {/* Use picture property instead of avatar */}
                   {user?.picture ? (
                     <img 
                       src={user.picture} 

@@ -1,13 +1,12 @@
 import React from 'react';
 import { Navigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
-import './ProtectedRoute.scss';
 
-interface ProtectedRouteProps {
+interface RedirectIfLoggedInProps {
   children: React.ReactNode;
 }
 
-const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
+const RedirectIfLoggedIn: React.FC<RedirectIfLoggedInProps> = ({ children }) => {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
@@ -19,11 +18,11 @@ const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
     );
   }
 
-  if (!isAuthenticated) {
-    return <Navigate to="/login" />;
+  if (isAuthenticated) {
+    return <Navigate to="/projects" />;
   }
 
   return <>{children}</>;
 };
 
-export default ProtectedRoute;
+export default RedirectIfLoggedIn;

@@ -1,27 +1,34 @@
-import React, { ReactNode } from 'react';
+import React from 'react';
+import { Outlet, useLocation } from 'react-router-dom';
 import './App.css';
 import Header from './components/Header/Header';
-import { AuthProvider } from './context/AuthContext';
+import { AuthProvider, useAuth } from './context/AuthContext';
 import { GoogleOAuthProvider } from '@react-oauth/google';
 
-// Google OAuth Client ID - replace with your actual client ID
-const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID || "YOUR_GOOGLE_CLIENT_ID";
+// Replace with your actual client ID or use environment variable
+const googleClientId = process.env.REACT_APP_GOOGLE_CLIENT_ID || 'YOUR_GOOGLE_CLIENT_ID';
 
-// Define prop types with children
-interface AppProps {
-  children?: ReactNode;
-}
+const InnerApp: React.FC = () => {
+  const location = useLocation();
+  const { isAuthenticated } = useAuth();
 
-const App: React.FC<AppProps> = ({ children }) => {
+  const showHeader = !(location.pathname === '/' && !isAuthenticated);
+
+  return (
+    <div className="app">
+      {showHeader && <Header />}
+      <main className="app-main">
+        <Outlet />
+      </main>
+    </div>
+  );
+};
+
+const App: React.FC = () => {
   return (
     <GoogleOAuthProvider clientId={googleClientId}>
       <AuthProvider>
-        <div className="app">
-          <Header />
-          <main className="app-main">
-            {children}
-          </main>
-        </div>
+        <InnerApp />
       </AuthProvider>
     </GoogleOAuthProvider>
   );

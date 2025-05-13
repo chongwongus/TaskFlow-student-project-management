@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from 'react';
 import { Link } from 'react-router-dom';
 import { projectService } from '../../services/api';
-import './ProjectBoard.scss'; // Make sure to add the styles
+import './ProjectBoard.scss';
 
 interface ProjectMember {
   user: {
     _id: string;
     name: string;
     email: string;
-    avatar?: string;
+    picture?: string;
   };
   role: 'owner' | 'member' | 'viewer';
   joinedAt: string;
@@ -32,7 +32,7 @@ interface Project {
     _id: string;
     name: string;
     email: string;
-    avatar?: string;
+    picture?: string;
   };
   members: ProjectMember[];
   githubRepo?: GithubRepo;
@@ -65,7 +65,7 @@ const ProjectList: React.FC<ProjectListProps> = () => {
     fetchProjects();
   }, []);
 
-  if (loading) return <div>Loading projects...</div>;
+  if (loading) return <div className="loading-container">Loading projects...</div>;
   if (error) return <div className="error-message">{error}</div>;
 
   return (
@@ -83,12 +83,16 @@ const ProjectList: React.FC<ProjectListProps> = () => {
       ) : (
         <div className="project-grid">
           {projects.map((project) => (
-            <Link to={`/projects/${project._id}`} key={project._id} className="project-card">
+            <Link 
+              to={`/projects/${project._id}`} 
+              key={project._id} 
+              className={`project-card ${project.status}`}
+            >
               <h3>{project.name}</h3>
               <p>{project.description}</p>
               <div className="project-status">
                 <span className={`status-badge ${project.status}`}>
-                  {project.status.replace('-', ' ')}
+                  {project.status.replace(/-/g, ' ')}
                 </span>
               </div>
             </Link>
