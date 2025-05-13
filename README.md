@@ -100,7 +100,7 @@ For Google authentication integration:
 2. Frontend setup
    ```bash
    # Navigate to frontend directory
-   cd frontend
+   cd client
    
    # Install dependencies
    npm install
@@ -118,7 +118,7 @@ For Google authentication integration:
 4. Backend setup
    ```bash
    # Navigate to backend directory
-   cd ../backend
+   cd ../server
    
    # Install dependencies
    npm install
