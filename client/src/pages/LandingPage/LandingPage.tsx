@@ -1,4 +1,5 @@
 import React from 'react';
+import { Link } from 'react-router-dom';
 import './LandingPage.scss';
 
 interface FeatureCardProps {
@@ -47,8 +48,8 @@ const LandingPage: React.FC = () => {
           <p className="tagline">Streamline your team projects</p>
         </div>
         <nav className="nav-links">
-          <a href="#" className="nav-link">Login</a>
-          <a href="#" className="nav-link btn-primary">Get Started</a>
+          <Link to="/login" className="nav-link">Login</Link>
+          <Link to="/register" className="nav-link btn-primary">Get Started</Link>
         </nav>
       </header>
 
@@ -61,8 +62,8 @@ const LandingPage: React.FC = () => {
               effectively—all in one centralized platform designed specifically for academic teams.
             </p>
             <div className="cta-buttons">
-              <a href="#" className="btn-primary">Create Free Account</a>
-              <a href="#" className="btn-secondary">See How It Works</a>
+              <Link to="/register" className="btn-primary">Create Free Account</Link>
+              <Link to="/login" className="btn-secondary">See How It Works</Link>
             </div>
           </div>
           <div className="hero-image">
