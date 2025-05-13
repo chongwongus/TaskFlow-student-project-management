@@ -144,12 +144,14 @@ For Google authentication integration:
    Backend:
    ```bash
    # In the backend directory
+   cd server
    npm run dev
    ```
 
    Frontend:
    ```bash
    # In the frontend directory
+   cd client
    npm start
    ```
 
