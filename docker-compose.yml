@@ -1,8 +1,6 @@
 services:
   server:
-    build:
-      context: ./server
-      dockerfile: Dockerfile
+    image: r3dpnd/taskflow-server:latest
     ports:
       - "5000:5000"
     env_file:
@@ -10,9 +8,7 @@ services:
     restart: unless-stopped
 
   client:
-    build:
-      context: ./client
-      dockerfile: Dockerfile
+    image: r3dpnd/taskflow-client:latest
     ports:
       - "3000:80"
     env_file:

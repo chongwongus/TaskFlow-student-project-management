@@ -228,19 +228,19 @@ docker build -t taskflow-server ./server
 ```plaintext
 ```
 
-2. Build the client Docker image
+3. Build the client Docker image
 
 ```plaintext
 docker build -t taskflow-client ./client
 ```
 
-3. Build and run the Docker containers
+4. Build and run the Docker containers
 
    ```plaintext
    docker-compose up --build
    ```
 
-4. Access the application at `http://localhost:3000`
+5. Access the application at `http://localhost:3000`
 
 ## Secure Credential Sharing for Team Members
 
