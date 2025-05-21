@@ -14,9 +14,11 @@ This repository contains our group project for TCSS 506 Web Development Course. 
 
 ## Project Description
 
-TaskFlow is a standalone web application developed as a course project. The application is designed to help student teams track project progress, task completion, and team collaboration. Users can create and manage projects, assign tasks to team members, and monitor deadlines through an intuitive interface.
+TaskFlow is a standalone web application, developed as part of the TCSS 506 Web Development Course Group Project.
+It aims to be a comprehensive project management platform designed specifically for student teams to coordinate group projects, track assignments and enhance collaboration. The application is intended for project group members who are responsible for implementing and verifying the functionality of the web application. 
+The project emphasizes collaborative planning, design, and deployment of the web application while applying design methodologies to improve the project’s modularity. 
 
-The project aims to collaboratively plan, design, and deploy a web application while applying the MVC (Model-View-Controller) design pattern and other design methodologies to enhance the project's modularity.
+TaskFlow will utilize MongoDB for database management, React with Typescript for frontend development, Node.js for backend services, and the Flask Python web application framework for development. The application will be deployed on Amazon Web Services (AWS) and will incorporate external APIs for data integration. Additionally, TaskFlow will be containerized using Docker to facilitate efficient deployment.
 
 ## Features
 
