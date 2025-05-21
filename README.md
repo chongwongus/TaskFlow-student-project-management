@@ -78,6 +78,41 @@ project-root/
 - GitHub account (for API integration)
 - Docker (optional, for containerized deployment)
 
+### Basic Commands:
+
+```bash
+   # For Python Setup
+   sudo apt-get update
+   sudo apt-get upgrade
+   sudo apt install python3-pip
+   sudo apt install python3.12-venv
+   python3 -m venv venv
+   source venv/bin/activate
+   pip install Flask
+
+   # For Docker Installation
+   sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+   sudo mkdir -p /etc/apt/trusted.gpg.d
+   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo tee /etc/apt/trusted.gpg.d/docker.gpg > /dev/null
+   sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+   sudo apt-get install -y docker-ce
+   sudo usermod -aG docker $USER
+   sudo docker run hello-world
+
+   # For Git and GitHub Setup
+   sudo apt-get install git
+   git init
+   git add <file_name>
+   git commit -m "Your commit message"
+   git push origin <branch_name>
+   git status
+
+   # Checking Versions
+   flask --version
+   docker --version
+   git --version
+   ```
+
 ### Environment Setup for Team Collaboration
 
 #### MongoDB Atlas Setup
