@@ -15,8 +15,8 @@ This repository contains our group project for TCSS 506 Web Development Course. 
 ## Project Description
 
 TaskFlow is a standalone web application, developed as part of the TCSS 506 Web Development Course Group Project.
-It aims to be a comprehensive project management platform designed specifically for student teams to coordinate group projects, track assignments and enhance collaboration. The application is intended for project group members who are responsible for implementing and verifying the functionality of the web application. 
-The project emphasizes collaborative planning, design, and deployment of the web application while applying design methodologies to improve the project’s modularity. 
+It aims to be a comprehensive project management platform designed specifically for student teams to coordinate group projects, track assignments and enhance collaboration. The application is intended for project group members who are responsible for implementing and verifying the functionality of the web application.
+The project emphasizes collaborative planning, design, and deployment of the web application while applying design methodologies to improve the project’s modularity.
 
 TaskFlow will utilize MongoDB for database management, React with Typescript for frontend development, Node.js for backend services, and the Flask Python web application framework for development. The application will be deployed on Amazon Web Services (AWS) and will incorporate external APIs for data integration. Additionally, TaskFlow will be containerized using Docker to facilitate efficient deployment.
 
@@ -80,7 +80,7 @@ project-root/
 - GitHub account (for API integration)
 - Docker (optional, for containerized deployment)
 
-### Basic Commands:
+### Basic Commands
 
 ```bash
    # For Python Setup
@@ -217,13 +217,30 @@ For Google authentication integration:
 
 If you prefer using Docker for development:
 
-1. Build and run the Docker containers
+1. Build server image in the server directory
+
+```plaintext
+docker build -t taskflow-server ./server
+```
+
+2. Build the react client
+
+```plaintext
+```
+
+2. Build the client Docker image
+
+```plaintext
+docker build -t taskflow-client ./client
+```
+
+3. Build and run the Docker containers
 
    ```plaintext
    docker-compose up --build
    ```
 
-2. Access the application at `http://localhost:3000`
+4. Access the application at `http://localhost:3000`
 
 ## Secure Credential Sharing for Team Members
 
