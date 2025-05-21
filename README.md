@@ -106,8 +106,8 @@ For Google authentication integration:
 1. Clone the repository
 
    ```plaintext
-   git clone https://github.com/preston-hms/tcss506-project.git
-   cd tcss506-project
+   git clone https://github.com/chongwongus/TaskFlow-student-project-management.git
+   cd TaskFlow-student-project-management
    ```
 
 2. Frontend setup
