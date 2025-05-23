@@ -223,24 +223,19 @@ If you prefer using Docker for development:
 docker build -t taskflow-server ./server
 ```
 
-2. Build the react client
-
-```plaintext
-```
-
-3. Build the client Docker image
+2. Build the client Docker image
 
 ```plaintext
 docker build -t taskflow-client ./client
 ```
 
-4. Build and run the Docker containers
+3. Build and run the Docker containers
 
    ```plaintext
    docker-compose up --build
    ```
 
-5. Access the application at `http://localhost:3000`
+4. Access the application at `http://localhost:3000`
 
 ## Secure Credential Sharing for Team Members
 
