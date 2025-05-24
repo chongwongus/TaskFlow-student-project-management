@@ -248,7 +248,7 @@ To securely share credentials within the team:
    - Encrypted messaging (Signal, WhatsApp)
    - Secure team communication tools (Slack direct messages)
 4. Each team member should maintain their own `.env` files with the shared credentials
-5. If you need access to credentials, contact one of the team members
+5. If you need access to credentials, contact one of the team **TaskFlow** members
 
 ## API Endpoints
 
