@@ -1,6 +1,8 @@
 import axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 
-const API_URL = 'http://localhost:5000/api';
+const API_URL = process.env.NODE_ENV === 'production'
+  ? 'http://your-ec2-domain-or-ip:5000/api'  // Replace with your EC2 domain/IP
+  : 'http://localhost:5000/api';
 
 // Define types
 interface LoginCredentials {
@@ -44,7 +46,8 @@ const api = axios.create({
   baseURL: API_URL,
   headers: {
     'Content-Type': 'application/json'
-  }
+  },
+  withCredentials: true  // This is important for CORS
 });
 
 // Add request interceptor to add auth token - with corrected typing
