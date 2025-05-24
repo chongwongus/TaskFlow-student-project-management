@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 
 const API_URL = process.env.NODE_ENV === 'production'
-  ? 'http://34.230.44.202:5000/api'  // Replace with your EC2 domain/IP
+  ? 'http://34.230.44.202:5000/api'  // Make sure this matches your server's exposed port
   : 'http://localhost:5000/api';
 
 // Define types
@@ -45,9 +45,10 @@ interface GithubRepoData {
 const api = axios.create({
   baseURL: API_URL,
   headers: {
-    'Content-Type': 'application/json'
+    'Content-Type': 'application/json',
+    'Accept': 'application/json'
   },
-  withCredentials: true  // This is important for CORS
+  withCredentials: true
 });
 
 // Add request interceptor to add auth token - with corrected typing
@@ -59,7 +60,7 @@ api.interceptors.request.use(
     }
     return config;
   },
-  (error) => Promise.reject(error)
+  (error: Error) => Promise.reject(error)
 );
 
 // Auth services
