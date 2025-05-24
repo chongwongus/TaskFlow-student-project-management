@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 
 const API_URL = process.env.NODE_ENV === 'production'
-  ? 'http://your-ec2-domain-or-ip:5000/api'  // Replace with your EC2 domain/IP
+  ? 'http://34.230.44.202:5000/api'  // Replace with your EC2 domain/IP
   : 'http://localhost:5000/api';
 
 // Define types
