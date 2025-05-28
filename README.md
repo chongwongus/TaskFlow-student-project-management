@@ -16,7 +16,7 @@ This repository contains our group project for TCSS 506 Web Development Course. 
 
 TaskFlow is a standalone web application, developed as part of the TCSS 506 Web Development Course Group Project.
 It aims to be a comprehensive project management platform designed specifically for student teams to coordinate group projects, track assignments and enhance collaboration. The application is intended for project group members who are responsible for implementing and verifying the functionality of the web application.
-The project emphasizes collaborative planning, design, and deployment of the web application while applying design methodologies to improve the project’s modularity.
+The project emphasizes collaborative planning, design, and deployment of the web application while applying design methodologies to improve the project's modularity.
 
 TaskFlow will utilize MongoDB for database management, React with Typescript for frontend development, Node.js for backend services, and the Flask Python web application framework for development. The application will be deployed on Amazon Web Services (AWS) and will incorporate external APIs for data integration. Additionally, TaskFlow will be containerized using Docker to facilitate efficient deployment.
 
@@ -25,6 +25,7 @@ TaskFlow will utilize MongoDB for database management, React with Typescript for
 - **User Authentication System**: Complete login/registration functionality with Google OAuth integration
 - **Project Management**: Create, edit, and manage projects with team members
 - **Task Management**: Create, assign, and track tasks with different status categories
+- **GitHub Integration**: Connect repositories, sync issues, and track development progress
 - **Interactive UI**: Responsive design with intuitive user interface
 - **Database Integration**: MongoDB for data storage and retrieval
 - **External API Integration**: GitHub API integration for repository linking and issue tracking
@@ -79,6 +80,49 @@ project-root/
 - Google Developer account (for OAuth)
 - GitHub account (for API integration)
 - Docker (optional, for containerized deployment)
+
+### GitHub OAuth Setup
+
+TaskFlow integrates with GitHub to connect repositories and sync issues with tasks. To enable GitHub integration:
+
+#### 1. Create a GitHub OAuth App
+
+1. Go to [GitHub Developer Settings](https://github.com/settings/developers)
+2. Click **"OAuth Apps"** in the left sidebar
+3. Click **"New OAuth App"**
+4. Fill in the application details:
+   - **Application name**: `TaskFlow` (or your preferred name)
+   - **Homepage URL**: `http://localhost:3000` (for local development)
+   - **Application description**: `Project management platform for student teams`
+   - **Authorization callback URL**: `http://localhost:3000/github/callback`
+
+5. Click **"Register application"**
+6. Copy the **Client ID** and **Client Secret** (you'll need these for your environment variables)
+
+#### 2. Configure Environment Variables
+
+Add the GitHub OAuth credentials to your backend `.env` file:
+
+```bash
+# GitHub OAuth Configuration
+GITHUB_CLIENT_ID=your_github_client_id_here
+GITHUB_CLIENT_SECRET=your_github_client_secret_here
+
+# Frontend URL for OAuth redirects
+CLIENT_URL=http://localhost:3000
+```
+
+#### 3. Production Setup
+
+For production deployment, update your GitHub OAuth App:
+
+1. Edit your GitHub OAuth App
+2. Update the **Homepage URL** to your production domain
+3. Update the **Authorization callback URL** to: `https://yourdomain.com/github/callback`
+4. Update your production `.env` with:
+   ```bash
+   CLIENT_URL=https://yourdomain.com
+   ```
 
 ### Basic Commands
 
@@ -191,6 +235,7 @@ For Google authentication integration:
    GOOGLE_CLIENT_ID=<your_google_client_id>
    GITHUB_CLIENT_ID=<your_github_client_id>
    GITHUB_CLIENT_SECRET=<your_github_client_secret>
+   CLIENT_URL=http://localhost:3000
    ```
 
 6. Start the development servers
@@ -212,6 +257,26 @@ For Google authentication integration:
    ```
 
 7. Access the application at `http://localhost:3000`
+
+### Using GitHub Integration
+
+Once you have GitHub OAuth configured:
+
+1. **Connect Your GitHub Account**:
+   - Navigate to any project you own
+   - Click "Connect GitHub Repository" 
+   - You'll be redirected to GitHub for authorization
+   - After authorizing, you'll be redirected back to TaskFlow
+
+2. **Link a Repository**:
+   - Select a repository from your GitHub account
+   - Click "Connect" to link it to your project
+   - The repository will appear in your project details
+
+3. **Future Features** (coming soon):
+   - Sync GitHub issues with TaskFlow tasks
+   - View commit history and repository stats
+   - Create GitHub issues from TaskFlow tasks
 
 ### Running with Docker (Optional)
 
@@ -278,9 +343,14 @@ To securely share credentials within the team:
 
 ### GitHub Integration
 
+- `GET /api/github/auth-url` - Get GitHub OAuth authorization URL
+- `POST /api/github/token` - Exchange OAuth code for access token
+- `GET /api/github/status` - Check GitHub connection status
+- `DELETE /api/github/disconnect` - Disconnect GitHub account
 - `GET /api/github/repositories` - Get user's GitHub repositories
 - `GET /api/github/repository/:owner/:repo` - Get repository details
 - `GET /api/github/repository/:owner/:repo/issues` - Get repository issues
+- `POST /api/projects/:id/github` - Connect GitHub repository to project
 
 ## Testing
 
@@ -309,6 +379,13 @@ npm test
 - Verify the correct Google Client ID is in your .env file
 - Ensure `http://localhost:3000` is added to authorized JavaScript origins
 - Check browser console for any CORS or authorization errors
+
+### GitHub OAuth Issues
+
+- Verify the GitHub Client ID and Secret are correctly set in your `.env` file
+- Ensure the Authorization callback URL in your GitHub OAuth App matches exactly: `http://localhost:3000/github/callback`
+- Check that `CLIENT_URL` is set to `http://localhost:3000` in your backend `.env`
+- If you see "redirect_uri mismatch" errors, make sure there are no trailing slashes in your callback URL
 
 ### API Connection Issues
 
