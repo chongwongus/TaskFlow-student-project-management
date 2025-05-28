@@ -1,10 +1,11 @@
 import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
-import { projectService, taskService } from '../../services/api';
+import { projectService, taskService, githubService } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import AddMemberModal from '../Modals/AddMemberModal';
 import GitHubRepoModal from '../Modals/GitHubRepoModal';
 import SearchBar from '../Search/SearchBar';
+import GitHubIssues from '../GitHub/GitHubIssues';
 import { formatDisplayDate, isOverdue, isDueSoon, getRelativeTime } from '../../utils/dateUtils';
 import './ProjectBoard.scss';
 
@@ -134,6 +135,19 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
         }
     };
 
+    const refreshTasks = async () => {
+        try {
+            const tasksResponse = await taskService.getProjectTasks(projectId);
+            setTasks(tasksResponse.data.data);
+        } catch (err: any) {
+            console.error('Error refreshing tasks:', err);
+        }
+    };
+
+    const refreshProjectAndTasks = async () => {
+        await Promise.all([refreshProject(), refreshTasks()]);
+    };
+
     const isCurrentUserOwner = () => {
         if (!project || !currentUser) return false;
         return project.members.some(member => 
@@ -223,6 +237,27 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
                     t._id === taskId ? { ...t, status: newStatus } : t
                 )
             );
+
+            // If task has linked GitHub issue, sync status to GitHub
+            if (task.githubIssue && project?.githubRepo) {
+                try {
+                    // Determine if we should close/reopen the GitHub issue
+                    const shouldCloseIssue = newStatus === 'completed';
+                    const newGitHubState = shouldCloseIssue ? 'closed' : 'open';
+                    
+                    await githubService.updateIssue(
+                        project.githubRepo.owner,
+                        project.githubRepo.name,
+                        task.githubIssue.number,
+                        { state: newGitHubState }
+                    );
+                    
+                    console.log(`Synced task status to GitHub: Issue #${task.githubIssue.number} is now ${newGitHubState}`);
+                } catch (githubError) {
+                    console.warn('Failed to sync status to GitHub:', githubError);
+                    // Don't show error to user since task update succeeded
+                }
+            }
         } catch (err: any) {
             setError(err.response?.data?.message || 'Failed to update task status');
             console.error('Error updating task status:', err);
@@ -443,6 +478,14 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
                             </a>
                         </div>
                     </div>
+                    
+                    {/* GitHub Issues Integration */}
+                    <GitHubIssues 
+                        projectId={projectId}
+                        repoOwner={project.githubRepo.owner}
+                        repoName={project.githubRepo.name}
+                        onTaskCreated={refreshProjectAndTasks}
+                    />
                 </div>
             ) : (
                 <div className="github-connect">
