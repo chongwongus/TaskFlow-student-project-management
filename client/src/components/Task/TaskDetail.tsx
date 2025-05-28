@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { taskService } from '../../services/api';
+import { formatDisplayDate, isOverdue, isDueSoon, getRelativeTime } from '../../utils/dateUtils';
 import './Task.scss';
 
 interface User {
@@ -78,9 +79,25 @@ const TaskDetail: React.FC = () => {
     }
   };
 
+  const getDueDateStatus = () => {
+    if (!task?.dueDate || task.status === 'completed') return null;
+    
+    if (isOverdue(task.dueDate)) {
+      return { type: 'overdue', message: 'Overdue' };
+    }
+    
+    if (isDueSoon(task.dueDate)) {
+      return { type: 'due-soon', message: 'Due soon' };
+    }
+    
+    return null;
+  };
+
   if (loading) return <div>Loading task...</div>;
   if (error) return <div className="error-message">{error}</div>;
   if (!task) return <div>Task not found</div>;
+
+  const dueDateStatus = getDueDateStatus();
 
   return (
     <div className="task-detail">
@@ -94,6 +111,11 @@ const TaskDetail: React.FC = () => {
             <span className={`task-badge priority-badge ${task.priority}`}>
               {task.priority} priority
             </span>
+            {dueDateStatus && (
+              <span className={`task-badge due-date-badge ${dueDateStatus.type}`}>
+                {dueDateStatus.message}
+              </span>
+            )}
           </div>
         </div>
         
@@ -201,7 +223,7 @@ const TaskDetail: React.FC = () => {
         <div className="detail-item">
           <span className="label">Created On</span>
           <div className="value">
-            {new Date(task.createdAt).toLocaleDateString()}
+            {formatDisplayDate(task.createdAt)}
           </div>
         </div>
         
@@ -209,7 +231,14 @@ const TaskDetail: React.FC = () => {
           <div className="detail-item">
             <span className="label">Due Date</span>
             <div className="value">
-              {new Date(task.dueDate).toLocaleDateString()}
+              <div className="due-date-info">
+                <span className={dueDateStatus ? `due-date ${dueDateStatus.type}` : 'due-date'}>
+                  {formatDisplayDate(task.dueDate)}
+                </span>
+                <span className="relative-time">
+                  ({getRelativeTime(task.dueDate)})
+                </span>
+              </div>
             </div>
           </div>
         )}
@@ -218,7 +247,7 @@ const TaskDetail: React.FC = () => {
           <div className="detail-item">
             <span className="label">Completed On</span>
             <div className="value">
-              {new Date(task.completedAt).toLocaleDateString()}
+              {formatDisplayDate(task.completedAt)}
             </div>
           </div>
         )}

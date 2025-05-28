@@ -1,28 +1,43 @@
-// src/components/ProjectBoard/ProjectForm.tsx - Add this file to your ProjectBoard directory
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { projectService } from '../../services/api';
-import './ProjectBoard.scss'; // Make sure to update your styles
+import DateInput from '../DateInput/DateInput';
+import { formatInputDate, validateDateRange, getTodayString } from '../../utils/dateUtils';
+import './ProjectBoard.scss';
 
 interface ProjectFormData {
   name: string;
   description: string;
   status: 'planning' | 'in-progress' | 'completed' | 'on-hold';
+  startDate?: string;
+  endDate?: string;
 }
 
 interface ProjectFormProps {
-  initialData?: ProjectFormData;
+  initialData?: Partial<ProjectFormData>;
   isEditing?: boolean;
   projectId?: string;
 }
 
 const ProjectForm: React.FC<ProjectFormProps> = ({ 
-  initialData = { name: '', description: '', status: 'planning' },
+  initialData = { 
+    name: '', 
+    description: '', 
+    status: 'planning',
+    startDate: getTodayString() // Default to today
+  },
   isEditing = false,
   projectId
 }) => {
-  const [formData, setFormData] = useState<ProjectFormData>(initialData);
-  const [errors, setErrors] = useState<Partial<ProjectFormData>>({});
+  const [formData, setFormData] = useState<ProjectFormData>({
+    name: initialData.name || '',
+    description: initialData.description || '',
+    status: initialData.status || 'planning',
+    startDate: formatInputDate(initialData.startDate) || getTodayString(),
+    endDate: formatInputDate(initialData.endDate) || ''
+  });
+  
+  const [errors, setErrors] = useState<Partial<ProjectFormData & { dateRange?: string }>>({});
   const [loading, setLoading] = useState<boolean>(false);
   const [error, setError] = useState<string | null>(null);
   const navigate = useNavigate();
@@ -33,11 +48,32 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       ...formData,
       [name]: value
     });
+    
+    // Clear errors when user starts typing
+    if (errors[name as keyof typeof errors]) {
+      const newErrors = { ...errors };
+      delete newErrors[name as keyof typeof errors];
+      setErrors(newErrors);
+    }
+  };
+
+  const handleDateChange = (field: 'startDate' | 'endDate') => (value: string) => {
+    setFormData({
+      ...formData,
+      [field]: value
+    });
+    
+    // Clear date-related errors
+    const newErrors = { ...errors };
+    delete newErrors[field];
+    delete newErrors.dateRange;
+    setErrors(newErrors);
   };
 
   const validateForm = (): boolean => {
-    const newErrors: Partial<ProjectFormData> = {};
+    const newErrors: Partial<ProjectFormData & { dateRange?: string }> = {};
     
+    // Required field validation
     if (!formData.name.trim()) {
       newErrors.name = 'Project name is required';
     }
@@ -46,6 +82,23 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
       newErrors.description = 'Description is required';
     } else if (formData.description.length > 500) {
       newErrors.description = 'Description cannot be more than 500 characters';
+    }
+    
+    // Date validation
+    const dateValidation = validateDateRange(formData.startDate, formData.endDate);
+    if (!dateValidation.isValid) {
+      newErrors.dateRange = dateValidation.error;
+    }
+    
+    // Start date shouldn't be in the past for new projects (unless editing)
+    if (!isEditing && formData.startDate) {
+      const startDate = new Date(formData.startDate);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
+      
+      if (startDate < today) {
+        newErrors.startDate = 'Start date cannot be in the past';
+      }
     }
     
     setErrors(newErrors);
@@ -60,10 +113,17 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
         setLoading(true);
         setError(null);
         
+        // Prepare data for submission
+        const submitData = {
+          ...formData,
+          startDate: formData.startDate ? new Date(formData.startDate) : undefined,
+          endDate: formData.endDate ? new Date(formData.endDate) : undefined
+        };
+        
         if (isEditing && projectId) {
-          await projectService.updateProject(projectId, formData);
+          await projectService.updateProject(projectId, submitData);
         } else {
-          await projectService.createProject(formData);
+          await projectService.createProject(submitData);
         }
         
         navigate('/projects');
@@ -93,6 +153,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             onChange={handleChange}
             className={errors.name ? 'input-error' : ''}
             disabled={loading}
+            placeholder="Enter project name..."
           />
           {errors.name && <div className="error-message">{errors.name}</div>}
         </div>
@@ -107,6 +168,7 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
             className={errors.description ? 'input-error' : ''}
             rows={4}
             disabled={loading}
+            placeholder="Describe your project..."
           />
           {errors.description && <div className="error-message">{errors.description}</div>}
           <div className="char-count">
@@ -114,21 +176,50 @@ const ProjectForm: React.FC<ProjectFormProps> = ({
           </div>
         </div>
         
-        <div className="form-group">
-          <label htmlFor="status">Status</label>
-          <select
-            id="status"
-            name="status"
-            value={formData.status}
-            onChange={handleChange}
-            disabled={loading}
-          >
-            <option value="planning">Planning</option>
-            <option value="in-progress">In Progress</option>
-            <option value="completed">Completed</option>
-            <option value="on-hold">On Hold</option>
-          </select>
+        <div className="form-row">
+          <div className="form-group">
+            <label htmlFor="status">Status</label>
+            <select
+              id="status"
+              name="status"
+              value={formData.status}
+              onChange={handleChange}
+              disabled={loading}
+            >
+              <option value="planning">Planning</option>
+              <option value="in-progress">In Progress</option>
+              <option value="completed">Completed</option>
+              <option value="on-hold">On Hold</option>
+            </select>
+          </div>
         </div>
+        
+        {/* Date Inputs */}
+        <div className="form-row">
+          <DateInput
+            label="Start Date"
+            value={formData.startDate}
+            onChange={handleDateChange('startDate')}
+            min={!isEditing ? getTodayString() : undefined}
+            error={errors.startDate}
+            required
+          />
+          
+          <DateInput
+            label="End Date (Optional)"
+            value={formData.endDate}
+            onChange={handleDateChange('endDate')}
+            min={formData.startDate || getTodayString()}
+            error={errors.endDate}
+          />
+        </div>
+        
+        {/* Date Range Error */}
+        {errors.dateRange && (
+          <div className="error-message date-range-error">
+            {errors.dateRange}
+          </div>
+        )}
         
         <div className="form-actions">
           <button 

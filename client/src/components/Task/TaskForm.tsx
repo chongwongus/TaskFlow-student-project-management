@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import { taskService, projectService } from '../../services/api';
+import DateInput from '../DateInput/DateInput';
+import { formatInputDate, getTodayString, isValidDate } from '../../utils/dateUtils';
 import './Task.scss';
 
 interface User {
@@ -47,10 +49,16 @@ const TaskForm: React.FC<TaskFormProps> = ({
 }) => {
   const navigate = useNavigate();
   const { projectId } = useParams<{ projectId: string }>();
+  
   const [formData, setFormData] = useState<TaskFormData>({
-    ...initialData as TaskFormData,
-    project: projectId || ''
-  } as TaskFormData);
+    title: initialData.title || '',
+    description: initialData.description || '',
+    status: initialData.status || 'to-do',
+    priority: initialData.priority || 'medium',
+    assignedTo: initialData.assignedTo || '',
+    dueDate: formatInputDate(initialData.dueDate) || ''
+  });
+  
   const [project, setProject] = useState<Project | null>(null);
   const [errors, setErrors] = useState<Partial<TaskFormData>>({});
   const [loading, setLoading] = useState<boolean>(false);
@@ -80,6 +88,27 @@ const TaskForm: React.FC<TaskFormProps> = ({
       ...formData,
       [name]: value
     });
+    
+    // Clear errors when user starts typing
+    if (errors[name as keyof typeof errors]) {
+      const newErrors = { ...errors };
+      delete newErrors[name as keyof typeof errors];
+      setErrors(newErrors);
+    }
+  };
+
+  const handleDateChange = (value: string) => {
+    setFormData({
+      ...formData,
+      dueDate: value
+    });
+    
+    // Clear date error
+    if (errors.dueDate) {
+      const newErrors = { ...errors };
+      delete newErrors.dueDate;
+      setErrors(newErrors);
+    }
   };
 
   const validateForm = (): boolean => {
@@ -91,6 +120,23 @@ const TaskForm: React.FC<TaskFormProps> = ({
     
     if (formData.description && formData.description.length > 500) {
       newErrors.description = 'Description cannot be more than 500 characters';
+    }
+    
+    // Validate due date if provided
+    if (formData.dueDate) {
+      if (!isValidDate(formData.dueDate)) {
+        newErrors.dueDate = 'Invalid due date';
+      } else {
+        const dueDate = new Date(formData.dueDate);
+        const today = new Date();
+        today.setHours(0, 0, 0, 0);
+        
+        // Warn if due date is in the past (but allow it)
+        if (dueDate < today && !isEditing) {
+          // This is just a warning, not an error
+          console.warn('Due date is in the past');
+        }
+      }
     }
     
     setErrors(newErrors);
@@ -110,11 +156,17 @@ const TaskForm: React.FC<TaskFormProps> = ({
         setLoading(true);
         setError(null);
   
-        // Convert dueDate from string to Date (if it exists)
+        // Prepare task data for submission
         const taskData = {
-          ...formData,
+          title: formData.title,
+          description: formData.description,
+          status: formData.status,
+          priority: formData.priority,
           project: projectId,
-          dueDate: formData.dueDate ? new Date(formData.dueDate) : undefined
+          // Only include assignedTo if it's not empty
+          ...(formData.assignedTo && formData.assignedTo !== '' && { assignedTo: formData.assignedTo }),
+          // Only include dueDate if it's provided
+          ...(formData.dueDate && { dueDate: new Date(formData.dueDate) })
         };
   
         if (isEditing && taskId) {
@@ -150,6 +202,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
             onChange={handleChange}
             className={errors.title ? 'input-error' : ''}
             disabled={loading}
+            placeholder="Enter task title..."
           />
           {errors.title && <div className="error-message">{errors.title}</div>}
         </div>
@@ -164,6 +217,7 @@ const TaskForm: React.FC<TaskFormProps> = ({
             className={errors.description ? 'input-error' : ''}
             rows={4}
             disabled={loading}
+            placeholder="Describe the task..."
           />
           {errors.description && <div className="error-message">{errors.description}</div>}
           <div className="char-count">
@@ -223,17 +277,14 @@ const TaskForm: React.FC<TaskFormProps> = ({
             </select>
           </div>
           
-          <div className="form-group">
-            <label htmlFor="dueDate">Due Date (optional)</label>
-            <input
-              type="date"
-              id="dueDate"
-              name="dueDate"
-              value={formData.dueDate || ''}
-              onChange={handleChange}
-              disabled={loading}
-            />
-          </div>
+          <DateInput
+            label="Due Date (Optional)"
+            value={formData.dueDate}
+            onChange={handleDateChange}
+            min={getTodayString()}
+            error={errors.dueDate}
+            disabled={loading}
+          />
         </div>
         
         <div className="form-actions">
