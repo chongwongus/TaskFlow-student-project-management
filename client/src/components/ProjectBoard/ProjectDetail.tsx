@@ -110,6 +110,22 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
         navigate(`/projects/${projectId}/edit`);
     };
 
+    const handleDeleteProject = async () => {
+        if (!project) return;
+
+        const confirmMessage = `Are you sure you want to delete the project "${project.name}"? This action cannot be undone and will delete all associated tasks.`;
+        
+        if (window.confirm(confirmMessage)) {
+            try {
+                await projectService.deleteProject(projectId);
+                navigate('/projects');
+            } catch (err: any) {
+                setError(err.response?.data?.message || 'Failed to delete project');
+                console.error('Error deleting project:', err);
+            }
+        }
+    };
+
     const handleAddTask = () => {
         navigate(`/projects/${projectId}/tasks/new`);
     };
@@ -181,6 +197,13 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
                         onClick={handleEditProject}
                     >
                         Edit Project
+                    </button>
+                    <button
+                        className="btn-secondary btn-danger"
+                        onClick={handleDeleteProject}
+                        title="Delete Project"
+                    >
+                        Delete Project
                     </button>
                     <button
                         className="btn-primary"

@@ -157,7 +157,8 @@ exports.deleteProject = async (req, res) => {
       });
     }
 
-    await project.remove();
+    // FIXED: Use findByIdAndDelete() instead of remove()
+    await Project.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
       success: true,

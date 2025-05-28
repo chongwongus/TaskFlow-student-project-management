@@ -241,7 +241,8 @@ exports.deleteTask = async (req, res) => {
       });
     }
 
-    await task.remove();
+    // FIXED: Use deleteOne() instead of remove()
+    await Task.findByIdAndDelete(req.params.id);
 
     res.status(200).json({
       success: true,
