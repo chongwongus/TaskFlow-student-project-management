@@ -12,6 +12,14 @@ exports.createProject = async (req, res) => {
     // Create project
     const project = await Project.create(req.body);
 
+    // Add the owner as a member with 'owner' role
+    project.members.push({
+      user: req.user.id,
+      role: 'owner'
+    });
+
+    await project.save();
+
     res.status(201).json({
       success: true,
       data: project
@@ -188,8 +196,14 @@ exports.addProjectMember = async (req, res) => {
       });
     }
 
-    // Make sure user is project owner
-    if (project.owner.toString() !== req.user.id) {
+    // Make sure user is project owner or has owner role in members
+    const userMember = project.members.find(member => 
+      member.user.toString() === req.user.id
+    );
+    const isOwner = project.owner.toString() === req.user.id || 
+                   (userMember && userMember.role === 'owner');
+
+    if (!isOwner) {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to add members to this project'
@@ -226,6 +240,9 @@ exports.addProjectMember = async (req, res) => {
 
     await project.save();
 
+    // Populate the new member data for response
+    await project.populate('members.user', 'name email avatar');
+
     res.status(200).json({
       success: true,
       data: project
@@ -252,38 +269,124 @@ exports.removeProjectMember = async (req, res) => {
       });
     }
 
-    // Make sure user is project owner
-    if (project.owner.toString() !== req.user.id) {
+    // Make sure user is project owner or has owner role in members
+    const userMember = project.members.find(member => 
+      member.user.toString() === req.user.id
+    );
+    const isOwner = project.owner.toString() === req.user.id || 
+                   (userMember && userMember.role === 'owner');
+
+    if (!isOwner) {
       return res.status(403).json({
         success: false,
         message: 'Not authorized to remove members from this project'
       });
     }
 
-    // Check if user is owner
-    if (project.owner.toString() === req.params.userId) {
-      return res.status(400).json({
-        success: false,
-        message: 'Cannot remove project owner from members'
-      });
-    }
-
-    // Check if user is a member
-    const memberIndex = project.members.findIndex(
+    // Find the member to remove
+    const memberToRemove = project.members.find(
       member => member.user.toString() === req.params.userId
     );
 
-    if (memberIndex === -1) {
+    if (!memberToRemove) {
       return res.status(404).json({
         success: false,
         message: 'User is not a member of this project'
       });
     }
 
+    // Prevent removing the last owner
+    const ownerMembers = project.members.filter(member => member.role === 'owner');
+    if (memberToRemove.role === 'owner' && ownerMembers.length === 1) {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot remove the last owner from the project'
+      });
+    }
+
     // Remove user from members array
-    project.members.splice(memberIndex, 1);
+    project.members = project.members.filter(
+      member => member.user.toString() !== req.params.userId
+    );
 
     await project.save();
+
+    res.status(200).json({
+      success: true,
+      data: project
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// @desc    Update member role
+// @route   PUT /api/projects/:id/members/:userId
+// @access  Private
+exports.updateMemberRole = async (req, res) => {
+  try {
+    const { role } = req.body;
+    
+    if (!['owner', 'member', 'viewer'].includes(role)) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid role. Must be owner, member, or viewer'
+      });
+    }
+
+    const project = await Project.findById(req.params.id);
+
+    if (!project) {
+      return res.status(404).json({
+        success: false,
+        message: 'Project not found'
+      });
+    }
+
+    // Make sure user is project owner or has owner role in members
+    const userMember = project.members.find(member => 
+      member.user.toString() === req.user.id
+    );
+    const isOwner = project.owner.toString() === req.user.id || 
+                   (userMember && userMember.role === 'owner');
+
+    if (!isOwner) {
+      return res.status(403).json({
+        success: false,
+        message: 'Not authorized to update member roles in this project'
+      });
+    }
+
+    // Find the member to update
+    const memberToUpdate = project.members.find(
+      member => member.user.toString() === req.params.userId
+    );
+
+    if (!memberToUpdate) {
+      return res.status(404).json({
+        success: false,
+        message: 'User is not a member of this project'
+      });
+    }
+
+    // Prevent removing the last owner
+    const ownerMembers = project.members.filter(member => member.role === 'owner');
+    if (memberToUpdate.role === 'owner' && ownerMembers.length === 1 && role !== 'owner') {
+      return res.status(400).json({
+        success: false,
+        message: 'Cannot change role of the last owner'
+      });
+    }
+
+    // Update the member's role
+    memberToUpdate.role = role;
+    await project.save();
+
+    // Populate member data for response
+    await project.populate('members.user', 'name email avatar');
 
     res.status(200).json({
       success: true,

@@ -78,8 +78,12 @@ export const projectService = {
   createProject: (projectData: ProjectData) => api.post('/projects', projectData),
   updateProject: (id: string, projectData: Partial<ProjectData>) => api.put(`/projects/${id}`, projectData),
   deleteProject: (id: string) => api.delete(`/projects/${id}`),
-  addMember: (id: string, email: string) => api.post(`/projects/${id}/members`, { email }),
-  removeMember: (projectId: string, userId: string) => api.delete(`/projects/${projectId}/members/${userId}`)
+  addMember: (id: string, email: string, role: string = 'member') => 
+    api.post(`/projects/${id}/members`, { email, role }),
+  removeMember: (projectId: string, userId: string) => 
+    api.delete(`/projects/${projectId}/members/${userId}`),
+  updateMemberRole: (projectId: string, userId: string, role: 'owner' | 'member' | 'viewer') =>
+    api.put(`/projects/${projectId}/members/${userId}`, { role })
 };
 
 // Task services

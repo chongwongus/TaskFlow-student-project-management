@@ -7,6 +7,7 @@ const {
   deleteProject,
   addProjectMember,
   removeProjectMember,
+  updateMemberRole,
   connectGithubRepo
 } = require('../controllers/projectController');
 const { protect } = require('../middleware/auth');
@@ -31,6 +32,7 @@ router.route('/:id/members')
   .post(addProjectMember);
 
 router.route('/:id/members/:userId')
+  .put(updateMemberRole)
   .delete(removeProjectMember);
 
 // GitHub repository connection

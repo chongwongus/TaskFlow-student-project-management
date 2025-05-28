@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { projectService, taskService } from '../../services/api';
+import { useAuth } from '../../context/AuthContext';
 import AddMemberModal from '../Modals/AddMemberModal';
 import './ProjectBoard.scss';
 
@@ -64,11 +65,11 @@ interface ProjectDetailProps {
 
 const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
     const navigate = useNavigate();
+    const { user: currentUser } = useAuth();
     const [project, setProject] = useState<Project | null>(null);
     const [tasks, setTasks] = useState<Task[]>([]);
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
-    // State for the modal
     const [showAddMemberModal, setShowAddMemberModal] = useState(false);
 
     useEffect(() => {
@@ -96,7 +97,6 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
         fetchProjectAndTasks();
     }, [projectId]);
 
-    // Add a function to refresh the project after adding a member
     const refreshProject = async () => {
         try {
             const projectResponse = await projectService.getProject(projectId);
@@ -104,6 +104,13 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
         } catch (err: any) {
             setError(err.response?.data?.message || 'Failed to refresh project');
         }
+    };
+
+    const isCurrentUserOwner = () => {
+        if (!project || !currentUser) return false;
+        return project.members.some(member => 
+            member.user._id === currentUser.id && member.role === 'owner'
+        );
     };
 
     const handleEditProject = () => {
@@ -126,6 +133,30 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
         }
     };
 
+    const handleRemoveMember = async (userId: string, memberName: string) => {
+        if (window.confirm(`Are you sure you want to remove ${memberName} from this project?`)) {
+            try {
+                await projectService.removeMember(projectId, userId);
+                await refreshProject();
+            } catch (err: any) {
+                setError(err.response?.data?.message || 'Failed to remove member');
+                console.error('Error removing member:', err);
+            }
+        }
+    };
+
+    const handleUpdateMemberRole = async (userId: string, newRole: 'owner' | 'member' | 'viewer', memberName: string) => {
+        if (window.confirm(`Are you sure you want to change ${memberName}'s role to ${newRole}?`)) {
+            try {
+                await projectService.updateMemberRole(projectId, userId, newRole);
+                await refreshProject();
+            } catch (err: any) {
+                setError(err.response?.data?.message || 'Failed to update member role');
+                console.error('Error updating member role:', err);
+            }
+        }
+    };
+
     const handleAddTask = () => {
         navigate(`/projects/${projectId}/tasks/new`);
     };
@@ -135,14 +166,11 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
     };
 
     const handleDeleteTask = async (taskId: string, e: React.MouseEvent) => {
-        // Stop event propagation to prevent navigation
         e.stopPropagation();
 
         if (window.confirm('Are you sure you want to delete this task?')) {
             try {
                 await taskService.deleteTask(taskId);
-
-                // Remove the task from the state
                 setTasks(prevTasks => prevTasks.filter(task => task._id !== taskId));
             } catch (err: any) {
                 setError(err.response?.data?.message || 'Failed to delete task');
@@ -152,20 +180,16 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
     };
 
     const handleUpdateTaskStatus = async (taskId: string, newStatus: 'to-do' | 'in-progress' | 'in-review' | 'completed', e: React.MouseEvent) => {
-        // Stop event propagation to prevent navigation
         e.stopPropagation();
 
         try {
             const task = tasks.find(t => t._id === taskId);
             if (!task) return;
 
-            // Only update if status is different
             if (task.status === newStatus) return;
 
-            // Update task status
             await taskService.updateTask(taskId, { status: newStatus });
 
-            // Update the task in the state
             setTasks(prevTasks =>
                 prevTasks.map(t =>
                     t._id === taskId ? { ...t, status: newStatus } : t
@@ -181,6 +205,8 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
     if (error) return <div className="error-message">{error}</div>;
     if (!project) return <div>Project not found</div>;
 
+    const isOwner = isCurrentUserOwner();
+
     return (
         <div className="project-detail">
             <div className="project-header">
@@ -192,19 +218,23 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
                 </div>
 
                 <div className="project-actions">
-                    <button
-                        className="btn-secondary"
-                        onClick={handleEditProject}
-                    >
-                        Edit Project
-                    </button>
-                    <button
-                        className="btn-secondary btn-danger"
-                        onClick={handleDeleteProject}
-                        title="Delete Project"
-                    >
-                        Delete Project
-                    </button>
+                    {isOwner && (
+                        <button
+                            className="btn-secondary"
+                            onClick={handleEditProject}
+                        >
+                            Edit Project
+                        </button>
+                    )}
+                    {isOwner && (
+                        <button
+                            className="btn-secondary btn-danger"
+                            onClick={handleDeleteProject}
+                            title="Delete Project"
+                        >
+                            Delete Project
+                        </button>
+                    )}
                     <button
                         className="btn-primary"
                         onClick={handleAddTask}
@@ -222,7 +252,9 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
             <div className="project-dates">
                 <div className="date-item">
                     <span className="label">Start Date:</span>
-                    <span className="value">{new Date(project.startDate).toLocaleDateString()}</span>
+                    <span className="value">
+                        {project.startDate ? new Date(project.startDate).toLocaleDateString() : 'Not set'}
+                    </span>
                 </div>
                 {project.endDate && (
                     <div className="date-item">
@@ -248,14 +280,15 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
 
             <div className="project-members">
                 <h3>
-                    Team Members
-                    {/* Update the add member button to open the modal */}
-                    <button 
-                        className="add-member-btn"
-                        onClick={() => setShowAddMemberModal(true)}
-                    >
-                        + Add Member
-                    </button>
+                    Team Members ({project.members.length})
+                    {isOwner && (
+                        <button 
+                            className="add-member-btn"
+                            onClick={() => setShowAddMemberModal(true)}
+                        >
+                            + Add Member
+                        </button>
+                    )}
                 </h3>
                 <div className="members-list">
                     {project.members.map((member) => (
@@ -275,7 +308,41 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
                                 <div className="member-name">{member.user.name}</div>
                                 <div className="member-email">{member.user.email}</div>
                             </div>
-                            <div className={`member-role ${member.role}`}>{member.role}</div>
+                            
+                            {/* Role Management */}
+                            {isOwner ? (
+                                <div className="member-role-management">
+                                    <select
+                                        value={member.role}
+                                        onChange={(e) => handleUpdateMemberRole(
+                                            member.user._id, 
+                                            e.target.value as 'owner' | 'member' | 'viewer',
+                                            member.user.name
+                                        )}
+                                        className="role-select"
+                                    >
+                                        <option value="owner">Owner</option>
+                                        <option value="member">Member</option>
+                                        <option value="viewer">Viewer</option>
+                                    </select>
+                                    
+                                    {/* Only show remove button if not the current user or if there are other owners */}
+                                    {(member.user._id !== currentUser?.id || 
+                                      project.members.filter(m => m.role === 'owner').length > 1) && (
+                                        <button
+                                            className="remove-member-btn"
+                                            onClick={() => handleRemoveMember(member.user._id, member.user.name)}
+                                            title={`Remove ${member.user.name} from project`}
+                                        >
+                                            ✕
+                                        </button>
+                                    )}
+                                </div>
+                            ) : (
+                                <div className={`member-role ${member.role}`}>
+                                    {member.role}
+                                </div>
+                            )}
                         </div>
                     ))}
                 </div>
