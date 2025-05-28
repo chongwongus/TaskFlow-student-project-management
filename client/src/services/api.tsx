@@ -98,12 +98,30 @@ export const taskService = {
 
 // GitHub services
 export const githubService = {
+  // OAuth flow
+  getAuthUrl: () => api.get('/github/auth-url'),
+  exchangeCode: (code: string, state: string) => api.post('/github/token', { code, state }),
+  getStatus: () => api.get('/github/status'),
+  disconnect: () => api.delete('/github/disconnect'),
+  
+  // Repository operations
   getRepositories: () => api.get('/github/repositories'),
   getRepositoryDetails: (owner: string, repo: string) => api.get(`/github/repository/${owner}/${repo}`),
+  getRepositoryCommits: (owner: string, repo: string) => api.get(`/github/repository/${owner}/${repo}/commits`),
   getRepositoryIssues: (owner: string, repo: string) => api.get(`/github/repository/${owner}/${repo}/issues`),
+  
+  // Project integration
   connectGithubRepo: (projectId: string, repoData: GithubRepoData) => api.post(`/projects/${projectId}/github`, repoData),
+  
+  // Task-issue integration
   connectGithubIssue: (taskId: string, issueData: {id: number, number: number, url: string}) => 
-    api.post(`/tasks/${taskId}/github-issue`, issueData)
+    api.post(`/tasks/${taskId}/github-issue`, issueData),
+    
+  // Issue management
+  createIssue: (owner: string, repo: string, issueData: {title: string, body?: string, labels?: string[]}) =>
+    api.post(`/github/repository/${owner}/${repo}/issues`, issueData),
+  updateIssue: (owner: string, repo: string, issueNumber: number, issueData: {title?: string, body?: string, state?: string, labels?: string[]}) =>
+    api.put(`/github/repository/${owner}/${repo}/issues/${issueNumber}`, issueData)
 };
 
 export default api;

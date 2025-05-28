@@ -1,6 +1,9 @@
 const express = require('express');
 const {
+  getGithubAuthUrl,
   getGithubToken,
+  getGithubStatus,
+  disconnectGithub,
   getRepositories,
   getRepositoryDetails,
   getRepositoryCommits,
@@ -15,8 +18,11 @@ const router = express.Router();
 // Protect all routes
 router.use(protect);
 
-// Get GitHub access token
+// GitHub OAuth routes
+router.get('/auth-url', getGithubAuthUrl);
 router.post('/token', getGithubToken);
+router.get('/status', getGithubStatus);
+router.delete('/disconnect', disconnectGithub);
 
 // Get user repositories
 router.get('/repositories', getRepositories);

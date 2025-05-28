@@ -2,17 +2,52 @@ const User = require('../models/User');
 const GitHubService = require('../services/githubService');
 const axios = require('axios');
 
+// @desc    Get GitHub OAuth URL
+// @route   GET /api/github/auth-url
+// @access  Private
+exports.getGithubAuthUrl = async (req, res) => {
+  try {
+    const clientId = process.env.GITHUB_CLIENT_ID;
+    const redirectUri = `${process.env.CLIENT_URL}/github/callback`;
+    console.log('OAuth redirect URI:', redirectUri); // Debug log
+    const scope = 'repo,user:email';
+    const state = req.user.id; // Use user ID as state for security
+    
+    const authUrl = `https://github.com/login/oauth/authorize?client_id=${clientId}&redirect_uri=${encodeURIComponent(redirectUri)}&scope=${scope}&state=${state}`;
+    
+    res.status(200).json({
+      success: true,
+      data: {
+        authUrl
+      }
+    });
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
 // @desc    Exchange GitHub code for access token
 // @route   POST /api/github/token
 // @access  Private
 exports.getGithubToken = async (req, res) => {
   try {
-    const { code } = req.body;
+    const { code, state } = req.body;
 
     if (!code) {
       return res.status(400).json({
         success: false,
         message: 'Please provide a GitHub authorization code'
+      });
+    }
+
+    // Verify state matches current user ID for security
+    if (state !== req.user.id) {
+      return res.status(400).json({
+        success: false,
+        message: 'Invalid state parameter'
       });
     }
 
@@ -56,8 +91,80 @@ exports.getGithubToken = async (req, res) => {
     res.status(200).json({
       success: true,
       data: {
-        username: githubUser.login
+        username: githubUser.login,
+        connected: true
       }
+    });
+  } catch (error) {
+    console.error('GitHub OAuth error:', error);
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// @desc    Check GitHub connection status
+// @route   GET /api/github/status
+// @access  Private
+exports.getGithubStatus = async (req, res) => {
+  try {
+    const user = await User.findById(req.user.id).select('+githubToken');
+    
+    if (!user.githubToken || !user.githubUsername) {
+      return res.status(200).json({
+        success: true,
+        data: {
+          connected: false
+        }
+      });
+    }
+
+    // Test if token is still valid
+    try {
+      const github = new GitHubService(user.githubToken);
+      await github.getUserProfile();
+      
+      res.status(200).json({
+        success: true,
+        data: {
+          connected: true,
+          username: user.githubUsername
+        }
+      });
+    } catch (error) {
+      // Token might be invalid, clear it
+      await User.findByIdAndUpdate(req.user.id, {
+        $unset: { githubToken: 1, githubUsername: 1 }
+      });
+      
+      res.status(200).json({
+        success: true,
+        data: {
+          connected: false
+        }
+      });
+    }
+  } catch (error) {
+    res.status(500).json({
+      success: false,
+      message: error.message
+    });
+  }
+};
+
+// @desc    Disconnect GitHub account
+// @route   DELETE /api/github/disconnect
+// @access  Private
+exports.disconnectGithub = async (req, res) => {
+  try {
+    await User.findByIdAndUpdate(req.user.id, {
+      $unset: { githubToken: 1, githubUsername: 1 }
+    });
+
+    res.status(200).json({
+      success: true,
+      message: 'GitHub account disconnected successfully'
     });
   } catch (error) {
     res.status(500).json({

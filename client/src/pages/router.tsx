@@ -9,6 +9,7 @@ import EditProjectPage from './EditProjectPage/EditProjectPage';
 import NewTaskPage from './NewTaskPage/NewTaskPage';
 import EditTaskPage from './EditTaskPage/EditTaskPage';
 import TaskDetailPage from './TaskDetailPage/TaskDetailPage';
+import GitHubCallback from './GitHubCallback/GitHubCallback';
 import ProtectedRoute from '../components/Auth/ProtectedRoute';
 import RedirectIfLoggedIn from '../components/Auth/RedirectIfLoggedIn';
 
@@ -32,6 +33,14 @@ export const router = createBrowserRouter([
       {
         path: 'register',
         element: <Register />
+      },
+      {
+        path: 'github/callback',
+        element: (
+          <ProtectedRoute>
+            <GitHubCallback />
+          </ProtectedRoute>
+        )
       },
       {
         path: 'projects',
