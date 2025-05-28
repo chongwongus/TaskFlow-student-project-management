@@ -894,3 +894,211 @@
     }
   }
 }
+
+.project-list {
+  .project-list-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 2rem;
+    
+    @media (max-width: 768px) {
+      flex-direction: column;
+      gap: 1rem;
+      align-items: stretch;
+    }
+    
+    .header-left {
+      display: flex;
+      flex-direction: column;
+      gap: 0.5rem;
+      
+      h2 {
+        margin: 0;
+        font-size: 1.8rem;
+        color: var(--text-color);
+      }
+      
+      .project-count {
+        color: var(--light-text);
+        font-size: 0.9rem;
+        font-weight: 500;
+      }
+    }
+    
+    .header-right {
+      @media (max-width: 768px) {
+        align-self: flex-start;
+      }
+    }
+  }
+  
+  .search-section {
+    margin-bottom: 2rem;
+    display: flex;
+    justify-content: center;
+    
+    .project-search {
+      width: 100%;
+      max-width: 600px;
+    }
+  }
+  
+  .no-results {
+    text-align: center;
+    padding: 3rem;
+    background-color: var(--light-background);
+    border-radius: 8px;
+    margin-top: 1rem;
+    
+    p {
+      margin-bottom: 1.5rem;
+      font-size: 1.1rem;
+      color: var(--light-text);
+    }
+  }
+  
+  .project-grid {
+    .project-card {
+      .project-meta {
+        margin-bottom: 1rem;
+        font-size: 0.85rem;
+        color: var(--light-text);
+        
+        .project-owner {
+          margin-bottom: 0.25rem;
+          
+          .owner-label {
+            font-weight: 600;
+            margin-right: 0.5rem;
+          }
+          
+          .owner-name {
+            color: var(--text-color);
+          }
+        }
+        
+        .member-count {
+          color: var(--primary-color);
+          font-weight: 500;
+        }
+      }
+    }
+  }
+}
+
+/* Project Detail Task Search Styles */
+.project-detail {
+  .project-tasks {
+    .task-search-section {
+      margin-bottom: 1.5rem;
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      
+      .task-search {
+        width: 100%;
+        max-width: 500px;
+        margin: 0 auto;
+      }
+      
+      .search-results-info {
+        text-align: center;
+        color: var(--light-text);
+        font-size: 0.9rem;
+        font-style: italic;
+      }
+    }
+    
+    .no-results {
+      text-align: center;
+      padding: 2rem;
+      background-color: var(--light-background);
+      border-radius: 8px;
+      margin-bottom: 1rem;
+      
+      p {
+        margin-bottom: 1rem;
+        color: var(--light-text);
+      }
+    }
+    
+    .task-columns {
+      .task-column {
+        .column-header {
+          font-weight: 600;
+          padding-bottom: 0.75rem;
+          margin-bottom: 0.75rem;
+          border-bottom: 2px solid var(--border-color);
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          
+          /* Show task counts in column headers */
+          font-size: 0.9rem;
+          color: var(--text-color);
+        }
+      }
+    }
+  }
+}
+
+/* Search highlight effect */
+.search-highlight {
+  background-color: rgba(74, 108, 250, 0.15);
+  padding: 0.1rem 0.2rem;
+  border-radius: 2px;
+}
+
+/* Empty state improvements */
+.empty-state {
+  text-align: center;
+  padding: 3rem;
+  background-color: var(--light-background);
+  border-radius: 8px;
+  margin-top: 2rem;
+  
+  p {
+    margin-bottom: 1.5rem;
+    font-size: 1.1rem;
+    color: var(--light-text);
+  }
+}
+
+/* Responsive search improvements */
+@media (max-width: 640px) {
+  .project-list {
+    .search-section {
+      .project-search {
+        max-width: 100%;
+      }
+    }
+  }
+  
+  .project-detail {
+    .project-tasks {
+      .task-search-section {
+        .task-search {
+          max-width: 100%;
+        }
+      }
+    }
+  }
+}
+
+/* Animation for search results */
+.project-card,
+.task-card {
+  animation: fadeIn 0.3s ease-out;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
