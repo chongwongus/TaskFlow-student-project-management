@@ -3,6 +3,7 @@ import { Link, useNavigate } from 'react-router-dom';
 import { projectService, taskService } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import AddMemberModal from '../Modals/AddMemberModal';
+import GitHubRepoModal from '../Modals/GitHubRepoModal';
 import SearchBar from '../Search/SearchBar';
 import { formatDisplayDate, isOverdue, isDueSoon, getRelativeTime } from '../../utils/dateUtils';
 import './ProjectBoard.scss';
@@ -73,6 +74,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+    const [showGitHubModal, setShowGitHubModal] = useState(false);
     const [taskSearchTerm, setTaskSearchTerm] = useState<string>('');
 
     useEffect(() => {
@@ -225,6 +227,15 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
             setError(err.response?.data?.message || 'Failed to update task status');
             console.error('Error updating task status:', err);
         }
+    };
+
+    const handleConnectGitHub = () => {
+        setShowGitHubModal(true);
+    };
+
+    const handleGitHubRepoConnected = () => {
+        refreshProject();
+        setShowGitHubModal(false);
     };
 
     // Get due date status for a task
@@ -401,17 +412,51 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
                 )}
             </div>
 
-            {project.githubRepo && (
-                <div className="github-info section-container">
-                    <h3>GitHub Repository</h3>
-                    <a
-                        href={project.githubRepo.url}
-                        target="_blank"
-                        rel="noopener noreferrer"
-                        className="github-link"
-                    >
-                        {project.githubRepo.fullName}
-                    </a>
+            {/* GitHub Repository Section - This is what was missing! */}
+            {project.githubRepo ? (
+                <div className="github-info">
+                    <h3>
+                        GitHub Repository
+                        {isOwner && (
+                            <button 
+                                className="connect-github-btn"
+                                onClick={handleConnectGitHub}
+                                title="Change connected repository"
+                            >
+                                Change Repo
+                            </button>
+                        )}
+                    </h3>
+                    <div className="github-repo-info">
+                        <div className="repo-details">
+                            <div className="repo-name">
+                                <span className="github-icon">📂</span>
+                                {project.githubRepo.name}
+                            </div>
+                            <a
+                                href={project.githubRepo.url}
+                                target="_blank"
+                                rel="noopener noreferrer"
+                                className="github-link"
+                            >
+                                {project.githubRepo.fullName} →
+                            </a>
+                        </div>
+                    </div>
+                </div>
+            ) : (
+                <div className="github-connect">
+                    <h3>GitHub Integration</h3>
+                    <p>Connect a GitHub repository to link issues with tasks and track development progress.</p>
+                    {isOwner && (
+                        <button 
+                            className="btn-secondary connect-github-btn"
+                            onClick={handleConnectGitHub}
+                        >
+                            <span className="github-icon">🔗</span>
+                            Connect GitHub Repository
+                        </button>
+                    )}
                 </div>
             )}
 
@@ -576,12 +621,20 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
                 )}
             </div>
             
-            {/* Render the AddMemberModal when showAddMemberModal is true */}
+            {/* Modal Components */}
             {showAddMemberModal && (
                 <AddMemberModal
                     projectId={projectId}
                     onClose={() => setShowAddMemberModal(false)}
                     onMemberAdded={refreshProject}
+                />
+            )}
+
+            {showGitHubModal && (
+                <GitHubRepoModal
+                    projectId={projectId}
+                    onClose={() => setShowGitHubModal(false)}
+                    onRepoConnected={handleGitHubRepoConnected}
                 />
             )}
         </div>

@@ -23,6 +23,11 @@
     animation: slideIn 0.3s ease-out;
     max-height: 90vh;
     overflow-y: auto;
+    
+    &.github-repo-modal {
+      max-width: 700px;
+      max-height: 80vh;
+    }
   }
   
   .modal-header {
@@ -55,6 +60,12 @@
         cursor: not-allowed;
       }
     }
+  }
+  
+  .modal-content {
+    padding: 1.5rem;
+    max-height: 50vh;
+    overflow-y: auto;
   }
   
   .modal-form {
@@ -94,7 +105,9 @@
     display: flex;
     justify-content: flex-end;
     gap: 1rem;
-    margin-top: 1rem;
+    padding: 1.5rem;
+    border-top: 1px solid var(--border-color);
+    background-color: #f8f9fa;
   }
   
   .modal-error {
@@ -116,6 +129,168 @@
     border-radius: 4px;
     font-size: 0.95rem;
   }
+
+  /* GitHub Repository Modal Specific Styles */
+  .github-connect-section {
+    text-align: center;
+    padding: 2rem;
+    
+    .github-icon {
+      font-size: 3rem;
+      margin-bottom: 1rem;
+    }
+    
+    h4 {
+      margin-bottom: 1rem;
+      color: var(--text-color);
+    }
+    
+    p {
+      color: var(--light-text);
+      margin-bottom: 2rem;
+      line-height: 1.5;
+    }
+  }
+  
+  .loading-section {
+    text-align: center;
+    padding: 2rem;
+    
+    .loading-spinner {
+      width: 40px;
+      height: 40px;
+      border: 4px solid rgba(74, 108, 250, 0.2);
+      border-radius: 50%;
+      border-top-color: var(--primary-color);
+      animation: spin 1s linear infinite;
+      margin: 0 auto 1rem;
+    }
+    
+    p {
+      color: var(--light-text);
+    }
+  }
+  
+  .search-section {
+    margin-bottom: 1.5rem;
+    
+    .repo-search-input {
+      width: 100%;
+      padding: 0.75rem;
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      font-size: 1rem;
+      
+      &:focus {
+        outline: none;
+        border-color: var(--primary-color);
+        box-shadow: 0 0 0 3px rgba(74, 108, 250, 0.15);
+      }
+    }
+  }
+  
+  .repositories-list {
+    .repo-count {
+      font-size: 0.9rem;
+      color: var(--light-text);
+      margin-bottom: 1rem;
+      font-weight: 500;
+    }
+    
+    .no-repos {
+      text-align: center;
+      padding: 2rem;
+      color: var(--light-text);
+    }
+    
+    .repo-items {
+      display: flex;
+      flex-direction: column;
+      gap: 0.75rem;
+      max-height: 400px;
+      overflow-y: auto;
+    }
+    
+    .repo-item {
+      border: 1px solid var(--border-color);
+      border-radius: 6px;
+      padding: 1rem;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      
+      &:hover {
+        border-color: var(--primary-color);
+        background-color: rgba(74, 108, 250, 0.02);
+      }
+      
+      &.selected {
+        border-color: var(--primary-color);
+        background-color: rgba(74, 108, 250, 0.05);
+        box-shadow: 0 0 0 2px rgba(74, 108, 250, 0.15);
+      }
+      
+      .repo-info {
+        .repo-name {
+          font-weight: 600;
+          font-size: 1.1rem;
+          margin-bottom: 0.25rem;
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          
+          .private-badge {
+            background-color: #ffeaa7;
+            color: #d63031;
+            font-size: 0.7rem;
+            padding: 0.2rem 0.4rem;
+            border-radius: 12px;
+            font-weight: 600;
+            text-transform: uppercase;
+          }
+        }
+        
+        .repo-full-name {
+          color: var(--light-text);
+          font-size: 0.9rem;
+          margin-bottom: 0.5rem;
+        }
+        
+        .repo-description {
+          color: var(--text-color);
+          font-size: 0.95rem;
+          margin-bottom: 0.75rem;
+          line-height: 1.4;
+        }
+        
+        .repo-meta {
+          display: flex;
+          gap: 1rem;
+          font-size: 0.85rem;
+          color: var(--light-text);
+          
+          .repo-language {
+            font-weight: 500;
+            color: var(--primary-color);
+          }
+        }
+      }
+      
+      .repo-actions {
+        margin-top: 0.75rem;
+        
+        .view-repo-link {
+          color: var(--primary-color);
+          text-decoration: none;
+          font-size: 0.9rem;
+          font-weight: 500;
+          
+          &:hover {
+            text-decoration: underline;
+          }
+        }
+      }
+    }
+  }
   
   @keyframes fadeIn {
     from { opacity: 0; }
@@ -130,5 +305,14 @@
     to { 
       opacity: 1;
       transform: translateY(0);
+    }
+  }
+  
+  @keyframes spin {
+    0% {
+      transform: rotate(0deg);
+    }
+    100% {
+      transform: rotate(360deg);
     }
   }

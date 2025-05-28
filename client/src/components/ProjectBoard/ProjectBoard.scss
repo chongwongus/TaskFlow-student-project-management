@@ -24,13 +24,48 @@
     .project-list-header {
       display: flex;
       justify-content: space-between;
-      align-items: center;
+      align-items: flex-start;
       margin-bottom: 2rem;
       
-      h2 {
-        margin: 0;
-        font-size: 1.8rem;
-        color: var(--text-color);
+      @media (max-width: 768px) {
+        flex-direction: column;
+        gap: 1rem;
+        align-items: stretch;
+      }
+      
+      .header-left {
+        display: flex;
+        flex-direction: column;
+        gap: 0.5rem;
+        
+        h2 {
+          margin: 0;
+          font-size: 1.8rem;
+          color: var(--text-color);
+        }
+        
+        .project-count {
+          color: var(--light-text);
+          font-size: 0.9rem;
+          font-weight: 500;
+        }
+      }
+      
+      .header-right {
+        @media (max-width: 768px) {
+          align-self: flex-start;
+        }
+      }
+    }
+    
+    .search-section {
+      margin-bottom: 2rem;
+      display: flex;
+      justify-content: center;
+      
+      .project-search {
+        width: 100%;
+        max-width: 600px;
       }
     }
     
@@ -48,74 +83,111 @@
       }
     }
     
+    .no-results {
+      text-align: center;
+      padding: 3rem;
+      background-color: var(--light-background);
+      border-radius: 8px;
+      margin-top: 1rem;
+      
+      p {
+        margin-bottom: 1.5rem;
+        font-size: 1.1rem;
+        color: var(--light-text);
+      }
+    }
+    
     .project-grid {
       display: grid;
       grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
       gap: 1.5rem;
-    }
-    
-    .project-card {
-      background-color: #fff;
-      border-radius: 8px;
-      padding: 1.5rem;
-      box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
-      transition: transform 0.3s ease, box-shadow 0.3s ease;
-      text-decoration: none;
-      color: var(--text-color);
-      border-top: 4px solid transparent;
       
-      &:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
-      }
-      
-      h3 {
-        margin-top: 0;
-        margin-bottom: 0.5rem;
-        font-size: 1.3rem;
-      }
-      
-      p {
-        margin-bottom: 1.5rem;
-        color: var(--light-text);
-        font-size: 0.95rem;
-      }
-      
-      .project-status {
-        display: flex;
-        justify-content: flex-end;
+      .project-card {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 1.5rem;
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        text-decoration: none;
+        color: var(--text-color);
+        border-top: 4px solid transparent;
+        animation: fadeIn 0.3s ease-out;
         
-        .status-badge {
-          font-size: 0.8rem;
-          padding: 0.25rem 0.5rem;
-          border-radius: 4px;
-          font-weight: 600;
-          text-transform: capitalize;
+        &:hover {
+          transform: translateY(-5px);
+          box-shadow: 0 10px 15px rgba(0, 0, 0, 0.1);
         }
-      }
-    }
-    
-    /* Card color borders based on status */
-    .project-card {
-      &.planning {
-        border-top-color: var(--info-color);
-      }
-      
-      &.in-progress {
-        border-top-color: var(--warning-color);
-      }
-      
-      &.completed {
-        border-top-color: var(--success-color);
-      }
-      
-      &.on-hold {
-        border-top-color: var(--danger-color);
+        
+        h3 {
+          margin-top: 0;
+          margin-bottom: 0.5rem;
+          font-size: 1.3rem;
+        }
+        
+        p {
+          margin-bottom: 1.5rem;
+          color: var(--light-text);
+          font-size: 0.95rem;
+        }
+        
+        .project-meta {
+          margin-bottom: 1rem;
+          font-size: 0.85rem;
+          color: var(--light-text);
+          
+          .project-owner {
+            margin-bottom: 0.25rem;
+            
+            .owner-label {
+              font-weight: 600;
+              margin-right: 0.5rem;
+            }
+            
+            .owner-name {
+              color: var(--text-color);
+            }
+          }
+          
+          .member-count {
+            color: var(--primary-color);
+            font-weight: 500;
+          }
+        }
+        
+        .project-status {
+          display: flex;
+          justify-content: flex-end;
+          
+          .status-badge {
+            font-size: 0.8rem;
+            padding: 0.25rem 0.5rem;
+            border-radius: 4px;
+            font-weight: 600;
+            text-transform: capitalize;
+          }
+        }
+        
+        /* Card color borders based on status */
+        &.planning {
+          border-top-color: var(--info-color);
+        }
+        
+        &.in-progress {
+          border-top-color: var(--warning-color);
+        }
+        
+        &.completed {
+          border-top-color: var(--success-color);
+        }
+        
+        &.on-hold {
+          border-top-color: var(--danger-color);
+        }
       }
     }
   }
   
-  /* Project Detail Styles - IMPROVED LAYOUT */
+  /* Project Detail Styles */
   .project-detail {
     max-width: 1200px;
     margin: 0 auto;
@@ -254,6 +326,81 @@
       }
     }
     
+    /* GitHub Integration Styles */
+    .github-info, .github-connect {
+      @extend .section-container;
+      
+      h3 {
+        margin-top: 0;
+        margin-bottom: 1rem;
+        font-size: 1.2rem;
+        color: var(--text-color);
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        
+        .connect-github-btn {
+          font-size: 0.9rem;
+          padding: 0.35rem 0.75rem;
+          background: none;
+          border: 1px solid var(--primary-color);
+          color: var(--primary-color);
+          border-radius: 4px;
+          cursor: pointer;
+          transition: all 0.2s ease;
+          
+          &:hover {
+            background-color: var(--primary-light);
+          }
+        }
+      }
+      
+      .github-repo-info {
+        .repo-details {
+          .repo-name {
+            font-weight: 600;
+            font-size: 1.1rem;
+            margin-bottom: 0.75rem;
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+            
+            .github-icon {
+              font-size: 1.2rem;
+            }
+          }
+          
+          .github-link {
+            color: var(--primary-color);
+            text-decoration: none;
+            font-weight: 500;
+            transition: all 0.2s ease;
+            
+            &:hover {
+              text-decoration: underline;
+              color: var(--primary-dark);
+            }
+          }
+        }
+      }
+      
+      p {
+        margin-bottom: 1.5rem;
+        color: var(--light-text);
+        line-height: 1.5;
+      }
+      
+      .connect-github-btn {
+        display: flex;
+        align-items: center;
+        gap: 0.5rem;
+        
+        .github-icon {
+          font-size: 1.1rem;
+        }
+      }
+    }
+    
     .project-members {
       @extend .section-container;
       
@@ -274,9 +421,11 @@
           color: var(--primary-color);
           border-radius: 4px;
           cursor: pointer;
+          transition: all 0.2s ease;
           
           &:hover {
             background-color: var(--primary-light);
+            transform: translateY(-1px);
           }
         }
       }
@@ -293,6 +442,12 @@
         padding: 0.75rem;
         border-radius: 6px;
         background-color: var(--light-background);
+        animation: fadeInUp 0.3s ease-out;
+        
+        &:hover {
+          transform: translateY(-1px);
+          box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
+        }
         
         .member-avatar, .member-avatar-placeholder {
           width: 40px;
@@ -325,6 +480,7 @@
           }
         }
         
+        /* Static role display for non-owners */
         .member-role {
           padding: 0.25rem 0.5rem;
           border-radius: 4px;
@@ -347,6 +503,97 @@
             color: #616161;
           }
         }
+        
+        /* Interactive role management for owners */
+        .member-role-management {
+          display: flex;
+          align-items: center;
+          gap: 0.5rem;
+          
+          .role-select {
+            padding: 0.35rem 0.5rem;
+            border: 1px solid var(--border-color);
+            border-radius: 4px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            background-color: white;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            
+            &:focus {
+              outline: none;
+              border-color: var(--primary-color);
+              box-shadow: 0 0 0 2px rgba(74, 108, 250, 0.15);
+            }
+            
+            &:hover {
+              border-color: var(--primary-color);
+            }
+            
+            &:disabled {
+              opacity: 0.6;
+              cursor: not-allowed;
+            }
+            
+            option[value="owner"] {
+              color: #1976d2;
+            }
+            
+            option[value="member"] {
+              color: #388e3c;
+            }
+            
+            option[value="viewer"] {
+              color: #616161;
+            }
+          }
+          
+          .remove-member-btn {
+            width: 28px;
+            height: 28px;
+            border: none;
+            border-radius: 50%;
+            background-color: #ff5252;
+            color: white;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s ease;
+            
+            &:hover {
+              background-color: #d32f2f;
+              transform: scale(1.1);
+            }
+            
+            &:active {
+              transform: scale(0.95);
+            }
+            
+            &:disabled {
+              opacity: 0.6;
+              cursor: not-allowed;
+            }
+          }
+        }
+        
+        /* Responsive design for member list */
+        @media (max-width: 640px) {
+          flex-direction: column;
+          align-items: flex-start;
+          gap: 0.75rem;
+          
+          .member-details {
+            width: 100%;
+          }
+          
+          .member-role-management {
+            width: 100%;
+            justify-content: space-between;
+          }
+        }
       }
     }
     
@@ -364,12 +611,49 @@
         }
       }
       
+      .task-search-section {
+        margin-bottom: 1.5rem;
+        display: flex;
+        flex-direction: column;
+        gap: 0.75rem;
+        
+        .task-search {
+          width: 100%;
+          max-width: 500px;
+          margin: 0 auto;
+          
+          @media (max-width: 640px) {
+            max-width: 100%;
+          }
+        }
+        
+        .search-results-info {
+          text-align: center;
+          color: var(--light-text);
+          font-size: 0.9rem;
+          font-style: italic;
+        }
+      }
+      
       .empty-state {
         background-color: white;
         padding: 2rem;
         border-radius: 8px;
         text-align: center;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        
+        p {
+          margin-bottom: 1rem;
+          color: var(--light-text);
+        }
+      }
+      
+      .no-results {
+        text-align: center;
+        padding: 2rem;
+        background-color: var(--light-background);
+        border-radius: 8px;
+        margin-bottom: 1rem;
         
         p {
           margin-bottom: 1rem;
@@ -400,29 +684,53 @@
         @media (max-width: 640px) {
           grid-template-columns: 1fr;
         }
+        
+        .task-column {
+          background-color: var(--light-background);
+          border-radius: 6px;
+          padding: 1rem;
+          
+          .column-header {
+            font-weight: 600;
+            padding-bottom: 0.75rem;
+            margin-bottom: 0.75rem;
+            border-bottom: 2px solid var(--border-color);
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: var(--text-color);
+            position: relative;
+            
+            /* Add warning indicators to column headers if they contain overdue tasks */
+            &.has-overdue::after {
+              content: "⚠️";
+              position: absolute;
+              right: 0;
+              top: 50%;
+              transform: translateY(-50%);
+              animation: pulse-warning 2s infinite;
+            }
+            
+            &.has-due-soon::after {
+              content: "⏰";
+              position: absolute;
+              right: 0;
+              top: 50%;
+              transform: translateY(-50%);
+            }
+          }
+          
+          .column-tasks {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            min-height: 200px;
+          }
+        }
       }
       
-      .task-column {
-        background-color: var(--light-background);
-        border-radius: 6px;
-        padding: 1rem;
-        
-        .column-header {
-          font-weight: 600;
-          padding-bottom: 0.75rem;
-          margin-bottom: 0.75rem;
-          border-bottom: 2px solid var(--border-color);
-        }
-        
-        .column-tasks {
-          display: flex;
-          flex-direction: column;
-          gap: 0.75rem;
-          min-height: 200px;
-        }
-      }
-      
-      /* IMPROVED TASK CARDS with better colors */
+      /* Task Cards with Due Date Indicators */
       .task-card {
         background-color: white;
         border-radius: 6px;
@@ -431,15 +739,72 @@
         cursor: pointer;
         transition: transform 0.3s ease, box-shadow 0.3s ease;
         border-left: 4px solid transparent;
+        animation: fadeIn 0.3s ease-out;
+        position: relative;
         
         &:hover {
           transform: translateY(-3px);
           box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
         }
         
+        /* Due Date Indicator - in its own space at the top */
+        .due-date-indicator {
+          display: flex;
+          align-items: center;
+          justify-content: center;
+          gap: 0.25rem;
+          font-size: 0.7rem;
+          font-weight: 600;
+          padding: 0.3rem 0.6rem;
+          border-radius: 12px;
+          margin-bottom: 0.75rem;
+          width: fit-content;
+          margin-left: auto;
+          margin-right: auto;
+          
+          &.overdue {
+            background-color: rgba(244, 67, 54, 0.15);
+            color: var(--danger-color);
+            border: 1px solid rgba(244, 67, 54, 0.4);
+            animation: pulse-warning 2s infinite;
+          }
+          
+          &.due-soon {
+            background-color: rgba(255, 152, 0, 0.15);
+            color: var(--warning-color);
+            border: 1px solid rgba(255, 152, 0, 0.4);
+          }
+          
+          .due-date-icon {
+            font-size: 0.9rem;
+          }
+          
+          .due-date-text {
+            font-size: 0.7rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            font-weight: 700;
+          }
+          
+          @media (max-width: 640px) {
+            font-size: 0.65rem;
+            padding: 0.25rem 0.5rem;
+            margin-bottom: 0.5rem;
+            
+            .due-date-icon {
+              font-size: 0.8rem;
+            }
+            
+            .due-date-text {
+              font-size: 0.65rem;
+            }
+          }
+        }
+        
         .task-title {
           font-weight: 600;
           margin-bottom: 0.5rem;
+          line-height: 1.3;
         }
         
         .task-description {
@@ -450,6 +815,28 @@
           -webkit-line-clamp: 2;
           -webkit-box-orient: vertical;
           overflow: hidden;
+        }
+        
+        .task-due-date {
+          font-size: 0.75rem;
+          color: var(--light-text);
+          margin-top: 0.5rem;
+          padding-top: 0.5rem;
+          border-top: 1px solid rgba(0, 0, 0, 0.05);
+          
+          &.overdue {
+            color: var(--danger-color);
+            font-weight: 600;
+          }
+          
+          &.due-soon {
+            color: var(--warning-color);
+            font-weight: 600;
+          }
+          
+          @media (max-width: 640px) {
+            font-size: 0.7rem;
+          }
         }
         
         .task-meta {
@@ -485,35 +872,7 @@
           }
         }
         
-        /* Enhanced task card color coding */
-        &.high {
-          border-left-color: #f44336;
-          
-          .priority-badge {
-            background-color: #ffebee;
-            color: #d32f2f;
-          }
-        }
-        
-        &.medium {
-          border-left-color: #ff9800;
-          
-          .priority-badge {
-            background-color: #fff8e1;
-            color: #f57c00;
-          }
-        }
-        
-        &.low {
-          border-left-color: #4caf50;
-          
-          .priority-badge {
-            background-color: #e8f5e9;
-            color: #388e3c;
-          }
-        }
-        
-        /* Task action buttons with better style */
+        /* Task action buttons */
         .task-actions {
           display: flex;
           justify-content: space-between;
@@ -553,11 +912,61 @@
             }
           }
         }
+        
+        /* Enhanced task card color coding */
+        &.high {
+          border-left-color: #f44336;
+          
+          .priority-badge {
+            background-color: #ffebee;
+            color: #d32f2f;
+          }
+        }
+        
+        &.medium {
+          border-left-color: #ff9800;
+          
+          .priority-badge {
+            background-color: #fff8e1;
+            color: #f57c00;
+          }
+        }
+        
+        &.low {
+          border-left-color: #4caf50;
+          
+          .priority-badge {
+            background-color: #e8f5e9;
+            color: #388e3c;
+          }
+        }
+        
+        /* Enhanced styling for cards with due dates */
+        &.has-due-date {
+          &.overdue {
+            border-left-color: var(--danger-color) !important;
+            box-shadow: 0 2px 8px rgba(244, 67, 54, 0.15);
+          }
+          
+          &.due-soon {
+            border-left-color: var(--warning-color) !important;
+            box-shadow: 0 2px 8px rgba(255, 152, 0, 0.15);
+          }
+          
+          .task-meta {
+            margin-top: 1.5rem; // Give space for the due date indicator
+          }
+          
+          &:hover .due-date-indicator {
+            transform: scale(1.1);
+            transition: transform 0.2s ease;
+          }
+        }
       }
     }
   }
   
-  /* Task status color improvements */
+  /* Status badge styles */
   .status-badge {
     &.to-do {
       background-color: #e3f2fd;
@@ -625,16 +1034,16 @@
       opacity: 0.6;
       cursor: not-allowed;
     }
-  }
-  
-  /* Delete button and complete task button */
-  .btn-danger {
-    background-color: white;
-    color: var(--danger-color);
-    border-color: var(--danger-color);
     
-    &:hover:not(:disabled) {
-      background-color: #ffebee;
+    &.btn-danger {
+      color: var(--danger-color);
+      border-color: var(--danger-color);
+      
+      &:hover:not(:disabled) {
+        background-color: #ffebee;
+        color: var(--danger-color);
+        border-color: var(--danger-color);
+      }
     }
   }
   
@@ -648,11 +1057,40 @@
     }
   }
   
-  /* Add a task fade-in animation */
-  .task-card {
-    animation: fadeIn 0.3s ease-out;
+  /* Enhanced button permissions and styling */
+  .project-actions {
+    display: flex;
+    gap: 1rem;
+    
+    @media (max-width: 480px) {
+      flex-direction: column;
+      width: 100%;
+      
+      button {
+        width: 100%;
+      }
+    }
   }
   
+  /* Search highlight effect */
+  .search-highlight {
+    background-color: rgba(74, 108, 250, 0.15);
+    padding: 0.1rem 0.2rem;
+    border-radius: 2px;
+  }
+  
+  /* Responsive search improvements */
+  @media (max-width: 640px) {
+    .project-list {
+      .search-section {
+        .project-search {
+          max-width: 100%;
+        }
+      }
+    }
+  }
+  
+  /* Animations */
   @keyframes fadeIn {
     from {
       opacity: 0;
@@ -663,610 +1101,44 @@
       transform: translateY(0);
     }
   }
-
-  .project-members {
-  .member-item {
-    display: flex;
-    align-items: center;
-    padding: 0.75rem;
-    border-radius: 6px;
-    background-color: var(--light-background);
-    position: relative;
-    
-    .member-avatar, .member-avatar-placeholder {
-      width: 40px;
-      height: 40px;
-      border-radius: 50%;
-      margin-right: 1rem;
-      object-fit: cover;
+  
+  @keyframes fadeInUp {
+    from {
+      opacity: 0;
+      transform: translateY(10px);
     }
-    
-    .member-avatar-placeholder {
-      background-color: var(--primary-color);
-      color: white;
-      display: flex;
-      align-items: center;
-      justify-content: center;
-      font-weight: 600;
+    to {
+      opacity: 1;
+      transform: translateY(0);
     }
-    
-    .member-details {
-      flex: 1;
-      
-      .member-name {
-        font-weight: 600;
-        margin-bottom: 0.25rem;
-      }
-      
-      .member-email {
-        font-size: 0.85rem;
-        color: var(--light-text);
-      }
+  }
+  
+  @keyframes pulse-warning {
+    0% { 
+      opacity: 1; 
+      transform: scale(1);
     }
-    
-    /* Static role display for non-owners */
-    .member-role {
-      padding: 0.25rem 0.5rem;
-      border-radius: 4px;
-      font-size: 0.8rem;
-      font-weight: 600;
-      text-transform: capitalize;
-      
-      &.owner {
-        background-color: #e3f2fd;
-        color: #1976d2;
-      }
-      
-      &.member {
-        background-color: #e8f5e9;
-        color: #388e3c;
-      }
-      
-      &.viewer {
-        background-color: #f5f5f5;
-        color: #616161;
-      }
+    50% { 
+      opacity: 0.8; 
+      transform: scale(1.05);
     }
-    
-    /* Interactive role management for owners */
-    .member-role-management {
-      display: flex;
-      align-items: center;
-      gap: 0.5rem;
-      
-      .role-select {
-        padding: 0.35rem 0.5rem;
-        border: 1px solid var(--border-color);
-        border-radius: 4px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        background-color: white;
-        cursor: pointer;
-        transition: all 0.2s ease;
-        
-        &:focus {
-          outline: none;
-          border-color: var(--primary-color);
-          box-shadow: 0 0 0 2px rgba(74, 108, 250, 0.15);
+    100% { 
+      opacity: 1; 
+      transform: scale(1);
+    }
+  }
+  
+  /* Dark theme support */
+  @media (prefers-color-scheme: dark) {
+    .task-card {
+      .due-date-indicator {
+        &.overdue {
+          background-color: rgba(244, 67, 54, 0.2);
         }
         
-        &:hover {
-          border-color: var(--primary-color);
-        }
-        
-        option[value="owner"] {
-          color: #1976d2;
-        }
-        
-        option[value="member"] {
-          color: #388e3c;
-        }
-        
-        option[value="viewer"] {
-          color: #616161;
-        }
-      }
-      
-      .remove-member-btn {
-        width: 28px;
-        height: 28px;
-        border: none;
-        border-radius: 50%;
-        background-color: #ff5252;
-        color: white;
-        font-size: 0.9rem;
-        font-weight: bold;
-        cursor: pointer;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        transition: all 0.2s ease;
-        
-        &:hover {
-          background-color: #d32f2f;
-          transform: scale(1.1);
-        }
-        
-        &:active {
-          transform: scale(0.95);
+        &.due-soon {
+          background-color: rgba(255, 152, 0, 0.2);
         }
       }
     }
   }
-  
-  /* Member count in header */
-  h3 {
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 1rem;
-    font-size: 1.2rem;
-    color: var(--text-color);
-    
-    .add-member-btn {
-      font-size: 0.9rem;
-      padding: 0.35rem 0.75rem;
-      background: none;
-      border: 1px solid var(--primary-color);
-      color: var(--primary-color);
-      border-radius: 4px;
-      cursor: pointer;
-      transition: all 0.2s ease;
-      
-      &:hover {
-        background-color: var(--primary-light);
-        transform: translateY(-1px);
-      }
-    }
-  }
-}
-
-/* Enhanced button permissions and styling */
-.project-actions {
-  display: flex;
-  gap: 1rem;
-  
-  @media (max-width: 480px) {
-    flex-direction: column;
-    width: 100%;
-    
-    button {
-      width: 100%;
-    }
-  }
-  
-  .btn-secondary.btn-danger {
-    color: var(--danger-color);
-    border-color: var(--danger-color);
-    
-    &:hover:not(:disabled) {
-      background-color: #ffebee;
-      color: var(--danger-color);
-      border-color: var(--danger-color);
-    }
-  }
-}
-
-/* Member management animations */
-.member-item {
-  animation: fadeInUp 0.3s ease-out;
-  
-  &:hover {
-    transform: translateY(-1px);
-    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.1);
-  }
-}
-
-@keyframes fadeInUp {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Loading states for member actions */
-.member-role-management {
-  .role-select:disabled,
-  .remove-member-btn:disabled {
-    opacity: 0.6;
-    cursor: not-allowed;
-  }
-}
-
-/* Improved responsive design for member list */
-@media (max-width: 640px) {
-  .member-item {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 0.75rem;
-    
-    .member-details {
-      width: 100%;
-    }
-    
-    .member-role-management {
-      width: 100%;
-      justify-content: space-between;
-    }
-  }
-}
-
-.project-list {
-  .project-list-header {
-    display: flex;
-    justify-content: space-between;
-    align-items: flex-start;
-    margin-bottom: 2rem;
-    
-    @media (max-width: 768px) {
-      flex-direction: column;
-      gap: 1rem;
-      align-items: stretch;
-    }
-    
-    .header-left {
-      display: flex;
-      flex-direction: column;
-      gap: 0.5rem;
-      
-      h2 {
-        margin: 0;
-        font-size: 1.8rem;
-        color: var(--text-color);
-      }
-      
-      .project-count {
-        color: var(--light-text);
-        font-size: 0.9rem;
-        font-weight: 500;
-      }
-    }
-    
-    .header-right {
-      @media (max-width: 768px) {
-        align-self: flex-start;
-      }
-    }
-  }
-  
-  .search-section {
-    margin-bottom: 2rem;
-    display: flex;
-    justify-content: center;
-    
-    .project-search {
-      width: 100%;
-      max-width: 600px;
-    }
-  }
-  
-  .no-results {
-    text-align: center;
-    padding: 3rem;
-    background-color: var(--light-background);
-    border-radius: 8px;
-    margin-top: 1rem;
-    
-    p {
-      margin-bottom: 1.5rem;
-      font-size: 1.1rem;
-      color: var(--light-text);
-    }
-  }
-  
-  .project-grid {
-    .project-card {
-      .project-meta {
-        margin-bottom: 1rem;
-        font-size: 0.85rem;
-        color: var(--light-text);
-        
-        .project-owner {
-          margin-bottom: 0.25rem;
-          
-          .owner-label {
-            font-weight: 600;
-            margin-right: 0.5rem;
-          }
-          
-          .owner-name {
-            color: var(--text-color);
-          }
-        }
-        
-        .member-count {
-          color: var(--primary-color);
-          font-weight: 500;
-        }
-      }
-    }
-  }
-}
-
-/* Project Detail Task Search Styles */
-.project-detail {
-  .project-tasks {
-    .task-search-section {
-      margin-bottom: 1.5rem;
-      display: flex;
-      flex-direction: column;
-      gap: 0.75rem;
-      
-      .task-search {
-        width: 100%;
-        max-width: 500px;
-        margin: 0 auto;
-      }
-      
-      .search-results-info {
-        text-align: center;
-        color: var(--light-text);
-        font-size: 0.9rem;
-        font-style: italic;
-      }
-    }
-    
-    .no-results {
-      text-align: center;
-      padding: 2rem;
-      background-color: var(--light-background);
-      border-radius: 8px;
-      margin-bottom: 1rem;
-      
-      p {
-        margin-bottom: 1rem;
-        color: var(--light-text);
-      }
-    }
-    
-    .task-columns {
-      .task-column {
-        .column-header {
-          font-weight: 600;
-          padding-bottom: 0.75rem;
-          margin-bottom: 0.75rem;
-          border-bottom: 2px solid var(--border-color);
-          display: flex;
-          justify-content: space-between;
-          align-items: center;
-          
-          /* Show task counts in column headers */
-          font-size: 0.9rem;
-          color: var(--text-color);
-        }
-      }
-    }
-  }
-}
-
-/* Search highlight effect */
-.search-highlight {
-  background-color: rgba(74, 108, 250, 0.15);
-  padding: 0.1rem 0.2rem;
-  border-radius: 2px;
-}
-
-/* Empty state improvements */
-.empty-state {
-  text-align: center;
-  padding: 3rem;
-  background-color: var(--light-background);
-  border-radius: 8px;
-  margin-top: 2rem;
-  
-  p {
-    margin-bottom: 1.5rem;
-    font-size: 1.1rem;
-    color: var(--light-text);
-  }
-}
-
-/* Responsive search improvements */
-@media (max-width: 640px) {
-  .project-list {
-    .search-section {
-      .project-search {
-        max-width: 100%;
-      }
-    }
-  }
-  
-  .project-detail {
-    .project-tasks {
-      .task-search-section {
-        .task-search {
-          max-width: 100%;
-        }
-      }
-    }
-  }
-}
-
-/* Animation for search results */
-.project-card,
-.task-card {
-  animation: fadeIn 0.3s ease-out;
-}
-
-@keyframes fadeIn {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-/* Task Card Due Date Indicators */
-.task-card {
-  position: relative;
-  
-  /* Due Date Indicator - now in its own space at the top */
-  .due-date-indicator {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 0.25rem;
-    font-size: 0.7rem;
-    font-weight: 600;
-    padding: 0.3rem 0.6rem;
-    border-radius: 12px;
-    margin-bottom: 0.75rem;
-    width: fit-content;
-    margin-left: auto;
-    margin-right: auto;
-    
-    &.overdue {
-      background-color: rgba(244, 67, 54, 0.15);
-      color: var(--danger-color);
-      border: 1px solid rgba(244, 67, 54, 0.4);
-      animation: pulse-warning 2s infinite;
-    }
-    
-    &.due-soon {
-      background-color: rgba(255, 152, 0, 0.15);
-      color: var(--warning-color);
-      border: 1px solid rgba(255, 152, 0, 0.4);
-    }
-    
-    .due-date-icon {
-      font-size: 0.9rem;
-    }
-    
-    .due-date-text {
-      font-size: 0.7rem;
-      text-transform: uppercase;
-      letter-spacing: 0.5px;
-      font-weight: 700;
-    }
-  }
-  
-  /* Task due date text at bottom of card */
-  .task-due-date {
-    font-size: 0.75rem;
-    color: var(--light-text);
-    margin-top: 0.5rem;
-    padding-top: 0.5rem;
-    border-top: 1px solid rgba(0, 0, 0, 0.05);
-    
-    &.overdue {
-      color: var(--danger-color);
-      font-weight: 600;
-    }
-    
-    &.due-soon {
-      color: var(--warning-color);
-      font-weight: 600;
-    }
-  }
-  
-  /* Enhanced styling for cards with due dates */
-  &.has-due-date {
-    &.overdue {
-      border-left-color: var(--danger-color) !important;
-      box-shadow: 0 2px 8px rgba(244, 67, 54, 0.15);
-    }
-    
-    &.due-soon {
-      border-left-color: var(--warning-color) !important;
-      box-shadow: 0 2px 8px rgba(255, 152, 0, 0.15);
-    }
-  }
-}
-
-/* Pulse animation for overdue tasks */
-@keyframes pulse-warning {
-  0% { 
-    opacity: 1; 
-    transform: scale(1);
-  }
-  50% { 
-    opacity: 0.8; 
-    transform: scale(1.05);
-  }
-  100% { 
-    opacity: 1; 
-    transform: scale(1);
-  }
-}
-
-/* Task column enhancements */
-.task-column {
-  .column-header {
-    position: relative;
-    
-    /* Add warning indicators to column headers if they contain overdue tasks */
-    &.has-overdue::after {
-      content: "⚠️";
-      position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-      animation: pulse-warning 2s infinite;
-    }
-    
-    &.has-due-soon::after {
-      content: "⏰";
-      position: absolute;
-      right: 0;
-      top: 50%;
-      transform: translateY(-50%);
-    }
-  }
-}
-
-/* Mobile responsiveness for due date indicators */
-@media (max-width: 640px) {
-  .task-card {
-    .due-date-indicator {
-      top: 0.25rem;
-      right: 0.25rem;
-      font-size: 0.65rem;
-      padding: 0.15rem 0.3rem;
-      
-      .due-date-text {
-        display: none; // Hide text on mobile, keep icon
-      }
-    }
-    
-    .task-due-date {
-      font-size: 0.7rem;
-    }
-  }
-}
-
-/* Dark theme support */
-@media (prefers-color-scheme: dark) {
-  .task-card {
-    .due-date-indicator {
-      &.overdue {
-        background-color: rgba(244, 67, 54, 0.2);
-      }
-      
-      &.due-soon {
-        background-color: rgba(255, 152, 0, 0.2);
-      }
-    }
-  }
-}
-
-/* Task card hover effects with due dates */
-.task-card.has-due-date:hover {
-  .due-date-indicator {
-    transform: scale(1.1);
-    transition: transform 0.2s ease;
-  }
-}
-
-/* Priority badge adjustments when due date indicator is present */
-.task-card.has-due-date {
-  .task-meta {
-    margin-top: 1.5rem; // Give space for the due date indicator
-  }
-}
