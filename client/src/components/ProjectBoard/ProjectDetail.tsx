@@ -1,9 +1,10 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { projectService, taskService } from '../../services/api';
 import { useAuth } from '../../context/AuthContext';
 import AddMemberModal from '../Modals/AddMemberModal';
-import { formatDisplayDate } from '../../utils/dateUtils';
+import SearchBar from '../Search/SearchBar';
+import { formatDisplayDate, isOverdue, isDueSoon, getRelativeTime } from '../../utils/dateUtils';
 import './ProjectBoard.scss';
 
 interface User {
@@ -72,6 +73,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
     const [loading, setLoading] = useState<boolean>(true);
     const [error, setError] = useState<string | null>(null);
     const [showAddMemberModal, setShowAddMemberModal] = useState(false);
+    const [taskSearchTerm, setTaskSearchTerm] = useState<string>('');
 
     useEffect(() => {
         const fetchProjectAndTasks = async () => {
@@ -97,6 +99,29 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
 
         fetchProjectAndTasks();
     }, [projectId]);
+
+    // Filter tasks based on search term
+    const filteredTasks = useMemo(() => {
+        if (!taskSearchTerm.trim()) {
+            return tasks;
+        }
+        
+        const searchLower = taskSearchTerm.toLowerCase().trim();
+        
+        return tasks.filter(task => 
+            task.title.toLowerCase().includes(searchLower) ||
+            (task.description && task.description.toLowerCase().includes(searchLower)) ||
+            task.status.toLowerCase().includes(searchLower) ||
+            task.priority.toLowerCase().includes(searchLower) ||
+            (task.assignedTo && task.assignedTo.name.toLowerCase().includes(searchLower)) ||
+            task.createdBy.name.toLowerCase().includes(searchLower)
+        );
+    }, [tasks, taskSearchTerm]);
+
+    // Get filtered tasks by status
+    const getTasksByStatus = (status: 'to-do' | 'in-progress' | 'in-review' | 'completed') => {
+        return filteredTasks.filter(task => task.status === status);
+    };
 
     const refreshProject = async () => {
         try {
@@ -200,6 +225,117 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
             setError(err.response?.data?.message || 'Failed to update task status');
             console.error('Error updating task status:', err);
         }
+    };
+
+    // Get due date status for a task
+    const getDueDateStatus = (task: Task) => {
+        if (!task.dueDate || task.status === 'completed') return null;
+        
+        if (isOverdue(task.dueDate)) {
+            return { type: 'overdue', message: 'Overdue', icon: '⚠️' };
+        }
+        
+        if (isDueSoon(task.dueDate)) {
+            return { type: 'due-soon', message: 'Due Soon', icon: '⏰' };
+        }
+        
+        return null;
+    };
+
+    const renderTaskCard = (task: Task) => {
+        const dueDateStatus = getDueDateStatus(task);
+        
+        return (
+            <div
+                key={task._id}
+                className={`task-card ${task.priority} ${dueDateStatus ? `has-due-date ${dueDateStatus.type}` : ''}`}
+                onClick={() => handleTaskClick(task._id)}
+            >
+                {dueDateStatus && (
+                    <div className={`due-date-indicator ${dueDateStatus.type}`}>
+                        <span className="due-date-icon">{dueDateStatus.icon}</span>
+                        <span className="due-date-text">{dueDateStatus.message}</span>
+                    </div>
+                )}
+                
+                <div className="task-title">{task.title}</div>
+                {task.description && (
+                    <div className="task-description">{task.description}</div>
+                )}
+                
+                {task.dueDate && (
+                    <div className={`task-due-date ${dueDateStatus?.type || ''}`}>
+                        Due: {getRelativeTime(task.dueDate)} ({formatDisplayDate(task.dueDate)})
+                    </div>
+                )}
+                
+                <div className="task-meta">
+                    <span className={`priority-badge ${task.priority}`}>
+                        {task.priority}
+                    </span>
+                    {task.assignedTo && (
+                        <div className="assigned-to">
+                            {task.assignedTo.picture ? (
+                                <img
+                                    src={task.assignedTo.picture}
+                                    alt={task.assignedTo.name}
+                                    className="assignee-avatar"
+                                />
+                            ) : (
+                                <div className="assignee-initials">
+                                    {task.assignedTo.name.charAt(0)}
+                                </div>
+                            )}
+                        </div>
+                    )}
+                </div>
+                <div className="task-actions">
+                    {task.status === 'to-do' && (
+                        <button
+                            className="btn-success task-action-btn"
+                            onClick={(e) => handleUpdateTaskStatus(task._id, 'in-progress', e)}
+                            title="Move to In Progress"
+                        >
+                            ▶ Start
+                        </button>
+                    )}
+                    {task.status === 'in-progress' && (
+                        <button
+                            className="btn-success task-action-btn"
+                            onClick={(e) => handleUpdateTaskStatus(task._id, 'in-review', e)}
+                            title="Move to Review"
+                        >
+                            ✓ Review
+                        </button>
+                    )}
+                    {task.status === 'in-review' && (
+                        <button
+                            className="btn-success task-action-btn"
+                            onClick={(e) => handleUpdateTaskStatus(task._id, 'completed', e)}
+                            title="Mark as Complete"
+                        >
+                            ✓ Complete
+                        </button>
+                    )}
+                    {task.status === 'completed' && (
+                        <button
+                            className="btn-success task-action-btn"
+                            onClick={(e) => handleUpdateTaskStatus(task._id, 'to-do', e)}
+                            title="Reopen Task"
+                        >
+                            ⟲ Reopen
+                        </button>
+                    )}
+                    <button
+                        className="btn-danger task-action-btn"
+                        onClick={(e) => handleDeleteTask(task._id, e)}
+                        title="Delete Task"
+                    >
+                        🗑️ Delete
+                    </button>
+                </div>
+            </div>
+        );
     };
 
     if (loading) return <div>Loading project...</div>;
@@ -351,7 +487,7 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
 
             <div className="project-tasks">
                 <div className="tasks-header">
-                    <h3>Tasks</h3>
+                    <h3>Tasks ({tasks.length})</h3>
                     <button
                         className="btn-secondary"
                         onClick={handleAddTask}
@@ -359,6 +495,23 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
                         Add Task
                     </button>
                 </div>
+
+                {/* Task Search */}
+                {tasks.length > 0 && (
+                    <div className="task-search-section">
+                        <SearchBar
+                            value={taskSearchTerm}
+                            onChange={setTaskSearchTerm}
+                            placeholder="Search tasks by title, description, assignee, or status..."
+                            className="task-search"
+                        />
+                        {taskSearchTerm && (
+                            <div className="search-results-info">
+                                Showing {filteredTasks.length} of {tasks.length} tasks
+                            </div>
+                        )}
+                    </div>
+                )}
 
                 {tasks.length === 0 ? (
                     <div className="empty-state">
@@ -370,234 +523,52 @@ const ProjectDetail: React.FC<ProjectDetailProps> = ({ projectId }) => {
                             Create First Task
                         </button>
                     </div>
+                ) : filteredTasks.length === 0 ? (
+                    <div className="no-results">
+                        <p>No tasks found matching "{taskSearchTerm}"</p>
+                        <button 
+                            onClick={() => setTaskSearchTerm('')}
+                            className="btn-secondary"
+                        >
+                            Clear Search
+                        </button>
+                    </div>
                 ) : (
                     <div className="tasks-container">
                         <div className="task-columns">
                             <div className="task-column">
-                                <div className="column-header">To Do</div>
+                                <div className="column-header">
+                                    To Do ({getTasksByStatus('to-do').length})
+                                </div>
                                 <div className="column-tasks">
-                                    {tasks
-                                        .filter(task => task.status === 'to-do')
-                                        .map(task => (
-                                            <div
-                                                key={task._id}
-                                                className={`task-card ${task.priority}`}
-                                                onClick={() => handleTaskClick(task._id)}
-                                            >
-                                                <div className="task-title">{task.title}</div>
-                                                {task.description && (
-                                                    <div className="task-description">{task.description}</div>
-                                                )}
-                                                <div className="task-meta">
-                                                    <span className={`priority-badge ${task.priority}`}>
-                                                        {task.priority}
-                                                    </span>
-                                                    {task.assignedTo && (
-                                                        <div className="assigned-to">
-                                                            {task.assignedTo.picture ? (
-                                                                <img
-                                                                    src={task.assignedTo.picture}
-                                                                    alt={task.assignedTo.name}
-                                                                    className="assignee-avatar"
-                                                                />
-                                                            ) : (
-                                                                <div className="assignee-initials">
-                                                                    {task.assignedTo.name.charAt(0)}
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div className="task-actions">
-                                                    <button
-                                                        className="btn-success task-action-btn"
-                                                        onClick={(e) => handleUpdateTaskStatus(task._id, 'in-progress', e)}
-                                                        title="Move to In Progress"
-                                                    >
-                                                        ▶ Start
-                                                    </button>
-                                                    <button
-                                                        className="btn-danger task-action-btn"
-                                                        onClick={(e) => handleDeleteTask(task._id, e)}
-                                                        title="Delete Task"
-                                                    >
-                                                        🗑️ Delete
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))
-                                    }
+                                    {getTasksByStatus('to-do').map(renderTaskCard)}
                                 </div>
                             </div>
 
                             <div className="task-column">
-                                <div className="column-header">In Progress</div>
+                                <div className="column-header">
+                                    In Progress ({getTasksByStatus('in-progress').length})
+                                </div>
                                 <div className="column-tasks">
-                                    {tasks
-                                        .filter(task => task.status === 'in-progress')
-                                        .map(task => (
-                                            <div
-                                                key={task._id}
-                                                className={`task-card ${task.priority}`}
-                                                onClick={() => handleTaskClick(task._id)}
-                                            >
-                                                <div className="task-title">{task.title}</div>
-                                                {task.description && (
-                                                    <div className="task-description">{task.description}</div>
-                                                )}
-                                                <div className="task-meta">
-                                                    <span className={`priority-badge ${task.priority}`}>
-                                                        {task.priority}
-                                                    </span>
-                                                    {task.assignedTo && (
-                                                        <div className="assigned-to">
-                                                            {task.assignedTo.picture ? (
-                                                                <img
-                                                                    src={task.assignedTo.picture}
-                                                                    alt={task.assignedTo.name}
-                                                                    className="assignee-avatar"
-                                                                />
-                                                            ) : (
-                                                                <div className="assignee-initials">
-                                                                    {task.assignedTo.name.charAt(0)}
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div className="task-actions">
-                                                    <button
-                                                        className="btn-success task-action-btn"
-                                                        onClick={(e) => handleUpdateTaskStatus(task._id, 'in-review', e)}
-                                                        title="Move to Review"
-                                                    >
-                                                        ✓ Review
-                                                    </button>
-                                                    <button
-                                                        className="btn-danger task-action-btn"
-                                                        onClick={(e) => handleDeleteTask(task._id, e)}
-                                                        title="Delete Task"
-                                                    >
-                                                        🗑️ Delete
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))
-                                    }
+                                    {getTasksByStatus('in-progress').map(renderTaskCard)}
                                 </div>
                             </div>
 
                             <div className="task-column">
-                                <div className="column-header">In Review</div>
+                                <div className="column-header">
+                                    In Review ({getTasksByStatus('in-review').length})
+                                </div>
                                 <div className="column-tasks">
-                                    {tasks
-                                        .filter(task => task.status === 'in-review')
-                                        .map(task => (
-                                            <div
-                                                key={task._id}
-                                                className={`task-card ${task.priority}`}
-                                                onClick={() => handleTaskClick(task._id)}
-                                            >
-                                                <div className="task-title">{task.title}</div>
-                                                {task.description && (
-                                                    <div className="task-description">{task.description}</div>
-                                                )}
-                                                <div className="task-meta">
-                                                    <span className={`priority-badge ${task.priority}`}>
-                                                        {task.priority}
-                                                    </span>
-                                                    {task.assignedTo && (
-                                                        <div className="assigned-to">
-                                                            {task.assignedTo.picture ? (
-                                                                <img
-                                                                    src={task.assignedTo.picture}
-                                                                    alt={task.assignedTo.name}
-                                                                    className="assignee-avatar"
-                                                                />
-                                                            ) : (
-                                                                <div className="assignee-initials">
-                                                                    {task.assignedTo.name.charAt(0)}
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div className="task-actions">
-                                                    <button
-                                                        className="btn-success task-action-btn"
-                                                        onClick={(e) => handleUpdateTaskStatus(task._id, 'completed', e)}
-                                                        title="Mark as Complete"
-                                                    >
-                                                        ✓ Complete
-                                                    </button>
-                                                    <button
-                                                        className="btn-danger task-action-btn"
-                                                        onClick={(e) => handleDeleteTask(task._id, e)}
-                                                        title="Delete Task"
-                                                    >
-                                                        🗑️ Delete
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))
-                                    }
+                                    {getTasksByStatus('in-review').map(renderTaskCard)}
                                 </div>
                             </div>
 
                             <div className="task-column">
-                                <div className="column-header">Completed</div>
+                                <div className="column-header">
+                                    Completed ({getTasksByStatus('completed').length})
+                                </div>
                                 <div className="column-tasks">
-                                    {tasks
-                                        .filter(task => task.status === 'completed')
-                                        .map(task => (
-                                            <div
-                                                key={task._id}
-                                                className={`task-card ${task.priority}`}
-                                                onClick={() => handleTaskClick(task._id)}
-                                            >
-                                                <div className="task-title">{task.title}</div>
-                                                {task.description && (
-                                                    <div className="task-description">{task.description}</div>
-                                                )}
-                                                <div className="task-meta">
-                                                    <span className={`priority-badge ${task.priority}`}>
-                                                        {task.priority}
-                                                    </span>
-                                                    {task.assignedTo && (
-                                                        <div className="assigned-to">
-                                                            {task.assignedTo.picture ? (
-                                                                <img
-                                                                    src={task.assignedTo.picture}
-                                                                    alt={task.assignedTo.name}
-                                                                    className="assignee-avatar"
-                                                                />
-                                                            ) : (
-                                                                <div className="assignee-initials">
-                                                                    {task.assignedTo.name.charAt(0)}
-                                                                </div>
-                                                            )}
-                                                        </div>
-                                                    )}
-                                                </div>
-                                                <div className="task-actions">
-                                                    <button
-                                                        className="btn-success task-action-btn"
-                                                        onClick={(e) => handleUpdateTaskStatus(task._id, 'to-do', e)}
-                                                        title="Reopen Task"
-                                                    >
-                                                        ⟲ Reopen
-                                                    </button>
-                                                    <button
-                                                        className="btn-danger task-action-btn"
-                                                        onClick={(e) => handleDeleteTask(task._id, e)}
-                                                        title="Delete Task"
-                                                    >
-                                                        🗑️ Delete
-                                                    </button>
-                                                </div>
-                                            </div>
-                                        ))
-                                    }
+                                    {getTasksByStatus('completed').map(renderTaskCard)}
                                 </div>
                             </div>
                         </div>

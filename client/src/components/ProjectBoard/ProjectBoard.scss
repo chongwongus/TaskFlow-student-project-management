@@ -1102,3 +1102,171 @@
     transform: translateY(0);
   }
 }
+
+/* Task Card Due Date Indicators */
+.task-card {
+  position: relative;
+  
+  /* Due Date Indicator - now in its own space at the top */
+  .due-date-indicator {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 0.25rem;
+    font-size: 0.7rem;
+    font-weight: 600;
+    padding: 0.3rem 0.6rem;
+    border-radius: 12px;
+    margin-bottom: 0.75rem;
+    width: fit-content;
+    margin-left: auto;
+    margin-right: auto;
+    
+    &.overdue {
+      background-color: rgba(244, 67, 54, 0.15);
+      color: var(--danger-color);
+      border: 1px solid rgba(244, 67, 54, 0.4);
+      animation: pulse-warning 2s infinite;
+    }
+    
+    &.due-soon {
+      background-color: rgba(255, 152, 0, 0.15);
+      color: var(--warning-color);
+      border: 1px solid rgba(255, 152, 0, 0.4);
+    }
+    
+    .due-date-icon {
+      font-size: 0.9rem;
+    }
+    
+    .due-date-text {
+      font-size: 0.7rem;
+      text-transform: uppercase;
+      letter-spacing: 0.5px;
+      font-weight: 700;
+    }
+  }
+  
+  /* Task due date text at bottom of card */
+  .task-due-date {
+    font-size: 0.75rem;
+    color: var(--light-text);
+    margin-top: 0.5rem;
+    padding-top: 0.5rem;
+    border-top: 1px solid rgba(0, 0, 0, 0.05);
+    
+    &.overdue {
+      color: var(--danger-color);
+      font-weight: 600;
+    }
+    
+    &.due-soon {
+      color: var(--warning-color);
+      font-weight: 600;
+    }
+  }
+  
+  /* Enhanced styling for cards with due dates */
+  &.has-due-date {
+    &.overdue {
+      border-left-color: var(--danger-color) !important;
+      box-shadow: 0 2px 8px rgba(244, 67, 54, 0.15);
+    }
+    
+    &.due-soon {
+      border-left-color: var(--warning-color) !important;
+      box-shadow: 0 2px 8px rgba(255, 152, 0, 0.15);
+    }
+  }
+}
+
+/* Pulse animation for overdue tasks */
+@keyframes pulse-warning {
+  0% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+  50% { 
+    opacity: 0.8; 
+    transform: scale(1.05);
+  }
+  100% { 
+    opacity: 1; 
+    transform: scale(1);
+  }
+}
+
+/* Task column enhancements */
+.task-column {
+  .column-header {
+    position: relative;
+    
+    /* Add warning indicators to column headers if they contain overdue tasks */
+    &.has-overdue::after {
+      content: "⚠️";
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+      animation: pulse-warning 2s infinite;
+    }
+    
+    &.has-due-soon::after {
+      content: "⏰";
+      position: absolute;
+      right: 0;
+      top: 50%;
+      transform: translateY(-50%);
+    }
+  }
+}
+
+/* Mobile responsiveness for due date indicators */
+@media (max-width: 640px) {
+  .task-card {
+    .due-date-indicator {
+      top: 0.25rem;
+      right: 0.25rem;
+      font-size: 0.65rem;
+      padding: 0.15rem 0.3rem;
+      
+      .due-date-text {
+        display: none; // Hide text on mobile, keep icon
+      }
+    }
+    
+    .task-due-date {
+      font-size: 0.7rem;
+    }
+  }
+}
+
+/* Dark theme support */
+@media (prefers-color-scheme: dark) {
+  .task-card {
+    .due-date-indicator {
+      &.overdue {
+        background-color: rgba(244, 67, 54, 0.2);
+      }
+      
+      &.due-soon {
+        background-color: rgba(255, 152, 0, 0.2);
+      }
+    }
+  }
+}
+
+/* Task card hover effects with due dates */
+.task-card.has-due-date:hover {
+  .due-date-indicator {
+    transform: scale(1.1);
+    transition: transform 0.2s ease;
+  }
+}
+
+/* Priority badge adjustments when due date indicator is present */
+.task-card.has-due-date {
+  .task-meta {
+    margin-top: 1.5rem; // Give space for the due date indicator
+  }
+}
