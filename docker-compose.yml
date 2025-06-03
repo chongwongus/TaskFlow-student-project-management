@@ -1,6 +1,7 @@
 services:
   server:
     image: taskflow-server:latest
+    pull_policy: never
     ports:
       - "5000:5000"
     env_file:
@@ -9,6 +10,7 @@ services:
 
   client:
     image: taskflow-client:latest
+    pull_policy: never
     ports:
       - "3000:80"
     env_file:
