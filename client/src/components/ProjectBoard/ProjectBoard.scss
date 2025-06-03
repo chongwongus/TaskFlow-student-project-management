@@ -1,19 +1,4 @@
 /* Enhanced ProjectBoard styles with better centering, colors and responsive design */
-
-:root {
-    --primary-color: #4a6cfa;
-    --primary-dark: #3d5bd9;
-    --primary-light: #e8efff;
-    --text-color: #333333;
-    --light-text: #666666;
-    --background-color: #ffffff;
-    --light-background: #f5f7ff;
-    --border-color: #e0e0e0;
-    --success-color: #4caf50;
-    --warning-color: #ff9800;
-    --danger-color: #f44336;
-    --info-color: #2196f3;
-  }
   
   /* Project List Styles */
   .project-list {
@@ -103,7 +88,7 @@
       gap: 1.5rem;
       
       .project-card {
-        background-color: #fff;
+        background-color: var(--background-color);
         border-radius: 8px;
         padding: 1.5rem;
         box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -242,22 +227,22 @@
           text-transform: capitalize;
           
           &.planning {
-            background-color: #e3f2fd;
+            background-color: var(--background-color);
             color: #1976d2;
           }
           
           &.in-progress {
-            background-color: #fff8e1;
+            background-color: var(--background-color);
             color: #f57c00;
           }
           
           &.completed {
-            background-color: #e8f5e9;
+            background-color: var(--background-color);
             color: #388e3c;
           }
           
           &.on-hold {
-            background-color: #ffebee;
+            background-color: var(--background-color);
             color: #d32f2f;
           }
         }
@@ -279,7 +264,7 @@
     }
     
     .section-container {
-      background-color: white;
+      background-color: var(--background-color);
       border-radius: 8px;
       box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
       padding: 1.5rem;
@@ -489,17 +474,17 @@
           text-transform: capitalize;
           
           &.owner {
-            background-color: #e3f2fd;
+            background-color: var(--background-color);;
             color: #1976d2;
           }
           
           &.member {
-            background-color: #e8f5e9;
+            background-color: var(--background-color);;
             color: #388e3c;
           }
           
           &.viewer {
-            background-color: #f5f5f5;
+            background-color: var(--background-color);;
             color: #616161;
           }
         }
@@ -516,7 +501,7 @@
             border-radius: 4px;
             font-size: 0.8rem;
             font-weight: 600;
-            background-color: white;
+            background-color: var(--background-color);;
             cursor: pointer;
             transition: all 0.2s ease;
             
@@ -554,7 +539,7 @@
             border: none;
             border-radius: 50%;
             background-color: #ff5252;
-            color: white;
+            color: var(--font-color);;
             font-size: 0.9rem;
             font-weight: bold;
             cursor: pointer;
@@ -662,7 +647,7 @@
       }
       
       .tasks-container {
-        background-color: white;
+        background-color: var(--background-color);
         border-radius: 8px;
         padding: 1.5rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
@@ -732,7 +717,7 @@
       
       /* Task Cards with Due Date Indicators */
       .task-card {
-        background-color: white;
+        background-color: var(--background-color);
         border-radius: 6px;
         padding: 1rem;
         box-shadow: 0 2px 4px rgba(0, 0, 0, 0.05);
@@ -1015,7 +1000,7 @@
   }
   
   .btn-secondary {
-    background-color: white;
+    background-color: var(--background-color);
     color: var(--primary-color);
     padding: 0.75rem 1.5rem;
     border-radius: 6px;
@@ -1048,12 +1033,12 @@
   }
   
   .btn-success {
-    background-color: white;
+    background-color: var(--background-color);
     color: var(--success-color);
     border-color: var(--success-color);
     
     &:hover:not(:disabled) {
-      background-color: #e8f5e9;
+      background-color: var(--background-color);;
     }
   }
   

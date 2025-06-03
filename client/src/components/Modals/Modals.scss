@@ -15,7 +15,7 @@
   }
   
   .modal-container {
-    background-color: white;
+    background-color: var(--background-color);;
     border-radius: 8px;
     width: 100%;
     max-width: 500px;
@@ -94,7 +94,7 @@
         }
         
         &:disabled {
-          background-color: #f5f5f5;
+          background-color:var(--background-color);
           cursor: not-allowed;
         }
       }
@@ -107,14 +107,14 @@
     gap: 1rem;
     padding: 1.5rem;
     border-top: 1px solid var(--border-color);
-    background-color: #f8f9fa;
+    background-color: var(--background-color);
   }
   
   .modal-error {
     margin: 0 1.5rem;
     margin-top: 1.5rem;
     padding: 0.75rem;
-    background-color: #ffebee;
+    background-color: var(--background-color);
     color: #d32f2f;
     border-radius: 4px;
     font-size: 0.95rem;
@@ -124,7 +124,7 @@
     margin: 0 1.5rem;
     margin-top: 1.5rem;
     padding: 0.75rem;
-    background-color: #e8f5e9;
+    background-color: var(--background-color);
     color: #388e3c;
     border-radius: 4px;
     font-size: 0.95rem;

@@ -1,15 +1,7 @@
-:root {
-    --primary-color: #4a6cfa;
-    --primary-dark: #3d5bd9;
-    --text-color: #333333;
-    --light-text: #666666;
-    --background-color: #ffffff;
-    --light-background: #f5f7ff;
-    --border-color: #e0e0e0;
-  }
+
   
   .task-form-container {
-    background-color: white;
+    background-color: var(--background-color);
     border-radius: 8px;
     padding: 2rem;
     max-width: 700px;
@@ -103,7 +95,7 @@
   
   /* Task Detail styles */
   .task-detail {
-    background-color: white;
+    background-color: var(--background-color);
     border-radius: 8px;
     padding: 2rem;
     max-width: 800px;
@@ -135,39 +127,39 @@
           
           .status-badge {
             &.to-do {
-              background-color: #e3f2fd;
+              background-color: var(--background-color);
               color: #1976d2;
             }
             
             &.in-progress {
-              background-color: #fff8e1;
+              background-color: var(--background-color);
               color: #f57c00;
             }
             
             &.in-review {
-              background-color: #e1f5fe;
+              background-color: var(--background-color);
               color: #0288d1;
             }
             
             &.completed {
-              background-color: #e8f5e9;
+              background-color: var(--background-color);
               color: #388e3c;
             }
           }
           
           .priority-badge {
             &.high {
-              background-color: #ffebee;
+              background-color: var(--background-color);
               color: #d32f2f;
             }
             
             &.medium {
-              background-color: #fff8e1;
+              background-color: var(--background-color);
               color: #f57c00;
             }
             
             &.low {
-              background-color: #e8f5e9;
+              background-color: var(--background-color);
               color: #388e3c;
             }
           }
@@ -311,7 +303,7 @@
   }
   
   .btn-secondary {
-    background-color: white;
+    background-color: var(--background-color);
     color: var(--primary-color);
     padding: 0.75rem 1.5rem;
     border-radius: 6px;
@@ -336,7 +328,7 @@
       border-color: #d32f2f;
       
       &:hover:not(:disabled) {
-        background-color: #ffebee;
+        background-color: var(--background-color);;
       }
     }
   }
@@ -350,13 +342,13 @@
   text-transform: capitalize;
   
   &.overdue {
-    background-color: #ffebee;
+    background-color: var(--background-color);;
     color: #d32f2f;
     border: 1px solid #ffcdd2;
   }
   
   &.due-soon {
-    background-color: #fff8e1;
+    background-color: var(--background-color);
     color: #f57c00;
     border: 1px solid #ffcc02;
   }
@@ -407,7 +399,7 @@
   .date-range-error {
     grid-column: span 2;
     text-align: center;
-    background-color: #ffebee;
+    background-color: var(--background-color);
     padding: 0.75rem;
     border-radius: 4px;
     margin-top: -0.5rem;

@@ -2,6 +2,8 @@ import React, { useState } from 'react';
 import { Link, useLocation, useNavigate } from 'react-router-dom';
 import { useAuth } from '../../context/AuthContext';
 import './Header.scss';
+import ThemeToggle from '../ThemeToggle/theme-toggle';
+import { DarkTheme, LightTheme } from '../../style/colors';
 
 const Header: React.FC = () => {
   const { isAuthenticated, user, logout } = useAuth();
@@ -54,6 +56,7 @@ const Header: React.FC = () => {
         </div>
         
         <nav className="header-nav">
+          <ThemeToggle  DarkTheme={DarkTheme} LightTheme={LightTheme}/>
           {isAuthenticated ? (
             <>
               <Link 

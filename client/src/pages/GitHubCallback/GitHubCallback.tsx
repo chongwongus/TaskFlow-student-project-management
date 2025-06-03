@@ -88,7 +88,7 @@ const GitHubCallback: React.FC = () => {
       padding: '2rem'
     }}>
       <div style={{
-        backgroundColor: 'white',
+        backgroundColor: 'var(--background-color)',
         borderRadius: '8px',
         padding: '3rem',
         boxShadow: '0 4px 6px rgba(0, 0, 0, 0.1)',

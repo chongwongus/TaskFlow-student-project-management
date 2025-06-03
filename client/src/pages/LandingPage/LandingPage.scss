@@ -1,13 +1,4 @@
 /* LandingPage.css */
-:root {
-    --primary-color: #4a6cfa;
-    --primary-dark: #3d5bd9;
-    --text-color: #333333;
-    --light-text: #666666;
-    --background-color: #ffffff;
-    --light-background: #f5f7ff;
-    --border-color: #e0e0e0;
-  }
   
   /* Button Styles */
   .btn-primary {
@@ -28,7 +19,7 @@
   }
   
   .btn-secondary {
-    background-color: white;
+    background-color: var(--background-color);;
     color: var(--primary-color);
     padding: 11px 24px;
     border-radius: 6px;
@@ -59,7 +50,7 @@
     align-items: center;
     padding: 1.5rem 5%;
     border-bottom: 1px solid var(--border-color);
-    background-color: white;
+    background-color: var(--background-color);
   }
   
   .logo-container {
@@ -145,7 +136,7 @@
     width: 100%;
     max-width: 500px;
     height: 300px;
-    background-color: #e0e6ff;
+    background-color: var(--background-color);;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
   }
@@ -171,7 +162,7 @@
   }
   
   .feature-card {
-    background-color: white;
+    background-color: var(--background-color);;
     padding: 2rem;
     border-radius: 8px;
     box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
@@ -201,7 +192,7 @@
   
   /* Footer Styles */
   .landing-footer {
-    background-color: #f8f9fa;
+    background-color: var(--background-color);;
     padding: 3rem 5% 1.5rem;
     border-top: 1px solid var(--border-color);
   }

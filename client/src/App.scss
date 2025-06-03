@@ -1,18 +1,3 @@
-:root {
-  --primary-color: #4a6cfa;
-  --primary-dark: #3d5bd9;
-  --primary-light: #e8efff;
-  --text-color: #333333;
-  --light-text: #666666;
-  --background-color: #ffffff;
-  --light-background: #f5f7ff;
-  --border-color: #e0e0e0;
-  --success-color: #4caf50;
-  --warning-color: #ff9800;
-  --danger-color: #f44336;
-  --info-color: #2196f3;
-}
-
 body {
   margin: 0;
   font-family: 'Inter', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
@@ -59,7 +44,7 @@ body {
 .error-message {
   color: var(--danger-color);
   padding: 1rem;
-  background-color: #ffebee;
+  background-color: var(--background-color);;
   border-radius: 4px;
   margin: 1rem auto;
   max-width: 600px;

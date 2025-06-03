@@ -1,5 +1,5 @@
 .app-header {
-    background-color: white;
+    background-color: var(--background-color);;
     box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
     position: sticky;
     top: 0;
@@ -142,7 +142,7 @@
       right: 0;
       width: 220px;
       margin-top: 0.5rem;
-      background-color: white;
+      background-color: var(--background-color);
       border-radius: 8px;
       box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
       overflow: hidden;
