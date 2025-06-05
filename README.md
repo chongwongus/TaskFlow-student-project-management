@@ -1,10 +1,10 @@
 # TaskFlow
 
-## Web Application Project - TCSS 506
+## Full-Stack Web Application Development & Deployment Project - TCSS 506
 
 ## Project Overview
 
-This repository contains our group project for TCSS 506 Web Development Course. We've designed and implemented a fully-functional web application with user authentication, database integration, and external API connectivity, deployed using Docker containers on AWS EC2.
+This repository contains our final capstone group project for TCSS 506 Practical Full Stack Development. We've designed and implemented a fully-functional web application with user authentication, database integration, and external API connectivity, deployed using Docker containers on AWS EC2.
 
 ## Team Members
 
@@ -40,6 +40,7 @@ TaskFlow will utilize MongoDB for database management, React with Typescript for
 - **External APIs**: GitHub API
 - **Deployment**: Docker, AWS EC2
 - **Version Control**: Git, GitHub
+- **Sprints(via Task Cards)**: YouTrack(by JetBrains)
 
 ## Project Structure
 
