@@ -18,7 +18,7 @@ TaskFlow is a standalone web application, developed as part of the TCSS 506 Web 
 It aims to be a comprehensive project management platform designed specifically for student teams to coordinate group projects, track assignments and enhance collaboration. The application is intended for project group members who are responsible for implementing and verifying the functionality of the web application.
 The project emphasizes collaborative planning, design, and deployment of the web application while applying design methodologies to improve the project's modularity.
 
-TaskFlow will utilize MongoDB for database management, React with Typescript for frontend development, Node.js for backend services, and the Flask Python web application framework for development. The application will be deployed on Amazon Web Services (AWS) and will incorporate external APIs for data integration. Additionally, TaskFlow will be containerized using Docker to facilitate efficient deployment.
+TaskFlow will utilize MongoDB for database management, React with Typescript for frontend development and Node.js for backend services. The application will be deployed on Amazon Web Services (AWS) and will incorporate external APIs for data integration. Additionally, TaskFlow will be containerized using Docker to facilitate efficient deployment.
 
 ## Features
 
@@ -148,10 +148,13 @@ For production deployment, update your GitHub OAuth App:
 
    # For Git and GitHub Setup
    sudo apt-get install git
+   git config --global user.name "Your user name"
+   git config --global user.email "Your user email" 
    git init
    git add <file_name>
    git commit -m "Your commit message"
    git push origin <branch_name>
+   git pull
    git status
 
    # Checking Versions
