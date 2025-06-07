@@ -22,6 +22,9 @@ router.route('/')
 router.route('/my-tasks')
   .get(getMyTasks);
 
+  router.route('/my-tasks')
+  .get(getMyTasks);
+
 router.route('/project/:projectId')
   .get(getProjectTasks);
 

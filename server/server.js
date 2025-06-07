@@ -35,6 +35,7 @@ if (process.env.NODE_ENV === 'development') {
 // Define routes
 app.use('/api/auth', require('./routes/authRoutes'));
 app.use('/api/projects', require('./routes/projectRoutes'));
+app.use('/api/userPreference', require('./routes/userPreferenceRoutes'));
 app.use('/api/tasks', require('./routes/taskRoutes'));
 app.use('/api/github', require('./routes/githubRoutes'));
 

@@ -34,6 +34,11 @@ interface TaskData {
   dueDate?: Date;
 }
 
+interface UserPreferenceData {
+  email?: string;
+  theme?: 'light' | 'dark';
+}
+
 interface GithubRepoData {
   owner: string;
   name: string;
@@ -94,6 +99,13 @@ export const taskService = {
   createTask: (taskData: TaskData) => api.post('/tasks', taskData),
   updateTask: (id: string, taskData: Partial<TaskData>) => api.put(`/tasks/${id}`, taskData),
   deleteTask: (id: string) => api.delete(`/tasks/${id}`)
+};
+
+// Task services
+export const userPreferenceService = {
+  getUserPreference: (email: string) => api.get(`/userPreference/userEmail=${email}`),
+  createUserPreference: (userPreferenceData: UserPreferenceData) => api.post('/userPreference', userPreferenceData),
+  updateUserPreference: (email: string, userPreferenceData: Partial<UserPreferenceData>) => api.put(`/userPreference/${email}`, userPreferenceData),
 };
 
 // GitHub services

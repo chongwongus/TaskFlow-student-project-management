@@ -12,6 +12,7 @@ import TaskDetailPage from './TaskDetailPage/TaskDetailPage';
 import GitHubCallback from './GitHubCallback/GitHubCallback';
 import ProtectedRoute from '../components/Auth/ProtectedRoute';
 import RedirectIfLoggedIn from '../components/Auth/RedirectIfLoggedIn';
+import UserPreference from './UserPreference/UserPreference';
 
 export const router = createBrowserRouter([
   {
@@ -63,6 +64,14 @@ export const router = createBrowserRouter([
         element: (
           <ProtectedRoute>
             <ProjectPage />
+          </ProtectedRoute>
+        )
+      },
+      {
+        path: 'userPreference',
+        element: (
+          <ProtectedRoute>
+            <UserPreference />
           </ProtectedRoute>
         )
       },

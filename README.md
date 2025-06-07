@@ -306,6 +306,9 @@ docker build -t taskflow-client ./client
 
 4. Access the application at `http://localhost:3000`
 
+sudo docker rmi -f $(sudo docker images -q)
+sudo docker stop $(sudo docker ps -a -q) && sudo docker rm $(sudo docker ps -a -q)
+
 ## Secure Credential Sharing for Team Members
 
 To securely share credentials within the team:

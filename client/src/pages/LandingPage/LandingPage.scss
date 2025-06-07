@@ -2,8 +2,8 @@
   
   /* Button Styles */
   .btn-primary {
-    background-color: var(--primary-color);
-    color: white;
+    background-color: var(--background-color);
+    color: var(--primary-color);
     padding: 12px 24px;
     border-radius: 6px;
     text-decoration: none;
@@ -19,7 +19,7 @@
   }
   
   .btn-secondary {
-    background-color: var(--background-color);;
+    background-color: var(--background-color);
     color: var(--primary-color);
     padding: 11px 24px;
     border-radius: 6px;

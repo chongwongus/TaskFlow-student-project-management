@@ -23,6 +23,10 @@ const Header: React.FC = () => {
     navigate('/'); // Redirect to landing page after logout
   };
 
+  const handleUserPreferences = () => {
+    navigate('/userPreference'); // Redirect to landing page after logout
+  };
+
   // Function to determine if we're on a project detail page
   const isProjectDetailPage = () => {
     // Check if we're on a project page, but not on the main projects list
@@ -50,13 +54,11 @@ const Header: React.FC = () => {
               TaskFlow
             </Link>
           </div>
-          
           {/* Show back button on project detail pages */}
           {isAuthenticated && isProjectDetailPage() && getBackToProjectsLink()}
         </div>
         
         <nav className="header-nav">
-          <ThemeToggle  DarkTheme={DarkTheme} LightTheme={LightTheme}/>
           {isAuthenticated ? (
             <>
               <Link 
@@ -98,7 +100,10 @@ const Header: React.FC = () => {
                       <button onClick={handleLogout} className="logout-button">
                         Logout
                       </button>
-                    </div>
+                      <button onClick={handleUserPreferences} className="logout-button">
+                        User Preference
+                        </button>
+                        </div>
                   </div>
                 )}
               </div>

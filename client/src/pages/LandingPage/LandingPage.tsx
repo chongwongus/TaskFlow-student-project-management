@@ -1,6 +1,10 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import './LandingPage.scss';
+import { setTheme } from '../../components/ThemeToggle/theme-toggle';
+import { userPreferenceService } from '../../services/api';
+import { DarkTheme, LightTheme } from '../../style/colors';
+import { useAuth } from '../../context/AuthContext';
 
 interface FeatureCardProps {
   icon: string;
@@ -17,6 +21,25 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) =
 );
 
 const LandingPage: React.FC = () => {
+  const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+
+    const { user } = useAuth();
+  const [darkTheme, setDarkTheme] = useState(darkThemeMq.matches);
+
+    useEffect(() => {
+      const fetchUserPreference = async () => {
+        if (user?.email){
+          const response = await userPreferenceService.getUserPreference(user?.email || '');
+          console.log('User Preference:', response);
+          setDarkTheme(response?.data.theme === 'dark');
+        }
+
+        let theme = darkTheme ? DarkTheme : LightTheme;
+        setTheme(theme);
+      };
+      fetchUserPreference();
+    }, [darkTheme]);
+    
   const features: FeatureCardProps[] = [
     {
       icon: '📋',
