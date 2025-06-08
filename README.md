@@ -2,412 +2,638 @@
 
 ## Full-Stack Web Application Development & Deployment Project - TCSS 506
 
-## Project Overview
+[![Docker](https://img.shields.io/badge/Docker-Ready-blue?logo=docker)](https://docker.com)
+[![AWS](https://img.shields.io/badge/AWS-EC2-orange?logo=amazon-aws)](https://aws.amazon.com)
+[![MongoDB](https://img.shields.io/badge/MongoDB-Atlas-green?logo=mongodb)](https://mongodb.com)
+[![React](https://img.shields.io/badge/React-TypeScript-blue?logo=react)](https://reactjs.org)
+[![Node.js](https://img.shields.io/badge/Node.js-Express-green?logo=node.js)](https://nodejs.org)
+
+## 🎯 Project Overview
 
 This repository contains our final capstone group project for TCSS 506 Practical Full Stack Development. We've designed and implemented a fully-functional web application with user authentication, database integration, and external API connectivity, deployed using Docker containers on AWS EC2.
 
-## Team Members
+TaskFlow is a comprehensive project management platform designed specifically for student teams to coordinate group projects, track assignments, and enhance collaboration. The application emphasizes collaborative planning, design, and deployment while applying modern design methodologies to improve modularity.
 
-- Preston Harms
-- Richard Le
-- Jannine G. D. MacGormain
+## 👥 Team Members
 
-## Project Description
+- **Preston Harms** - AWS Project Manager & DevOps
+- **Richard Le** - Git/GitHub Version Control & Backend Development  
+- **Jannine G. D. MacGormain** - Documentation & Project Coordination
 
-TaskFlow is a standalone web application, developed as part of the TCSS 506 Web Development Course Group Project.
-It aims to be a comprehensive project management platform designed specifically for student teams to coordinate group projects, track assignments and enhance collaboration. The application is intended for project group members who are responsible for implementing and verifying the functionality of the web application.
-The project emphasizes collaborative planning, design, and deployment of the web application while applying design methodologies to improve the project's modularity.
+## 🏗️ Architecture Overview
 
-TaskFlow will utilize MongoDB for database management, React with Typescript for frontend development and Node.js for backend services. The application will be deployed on Amazon Web Services (AWS) and will incorporate external APIs for data integration. Additionally, TaskFlow will be containerized using Docker to facilitate efficient deployment.
-
-## Features
-
-- **User Authentication System**: Complete login/registration functionality with Google OAuth integration
-- **Project Management**: Create, edit, and manage projects with team members
-- **Task Management**: Create, assign, and track tasks with different status categories
-- **GitHub Integration**: Connect repositories, sync issues, and track development progress
-- **Interactive UI**: Responsive design with intuitive user interface
-- **Database Integration**: MongoDB for data storage and retrieval
-- **External API Integration**: GitHub API integration for repository linking and issue tracking
-- **Docker Containerization**: Containerized deployment for consistent development and production environments
-
-## Technology Stack
-
-- **Frontend**: React, TypeScript, SCSS, React Router
-- **Backend**: Node.js, Express, Mongoose
-- **Database**: MongoDB Atlas
-- **Authentication**: JWT, Google OAuth
-- **External APIs**: GitHub API
-- **Deployment**: Docker, AWS EC2
-- **Version Control**: Git, GitHub
-- **Sprints(via Task Cards)**: YouTrack(by JetBrains)
-
-## Project Structure
-
-```plaintext
-project-root/
-│
-├── frontend/           # React TypeScript frontend
-│   ├── public/         # Static files
-│   └── src/            # Source files
-│       ├── components/ # React components
-│       ├── pages/      # Page components
-│       ├── services/   # API services
-│       └── context/    # React context (auth, etc.)
-│
-├── backend/            # Node.js Express backend
-│   ├── controllers/    # Request handlers
-│   ├── models/         # Mongoose models
-│   ├── routes/         # API routes
-│   ├── middleware/     # Express middleware
-│   ├── services/       # External service integrations
-│   └── config/         # Configuration files
-│
-├── docker/             # Docker configuration files
-│   ├── Dockerfile
-│   └── docker-compose.yml
-│
-└── docs/               # Documentation
-    └── planning.md     # Project planning document
+```
+┌─────────────────┐    ┌─────────────────┐
+│   Frontend      │    │   Backend       │
+│   (React TS)    │────│   (Node.js)     │
+│   Port 80       │    │   Port 5000     │
+└─────────────────┘    └─────────────────┘
+         │                       │
+         └───────────────────────┘
+                    │
+    ┌─────────────────────────────────┐
+    │         External APIs           │
+    │  ┌─────────────┐ ┌─────────────┐│
+    │  │  MongoDB    │ │   GitHub    ││
+    │  │  (Atlas)    │ │    API      ││
+    │  └─────────────┘ └─────────────┘│
+    └─────────────────────────────────┘
 ```
 
-## Installation & Setup
+## ✨ Features
+
+- **🔐 User Authentication System**: Complete login/registration with Google OAuth integration
+- **📋 Project Management**: Create, edit, and manage projects with team members
+- **✅ Task Management**: Create, assign, and track tasks with Kanban-style boards
+- **📅 Due Date Management**: Visual indicators for overdue and upcoming tasks
+- **👥 Team Collaboration**: Role-based member management (Owner, Member, Viewer)
+- **🔗 GitHub Integration**: Connect repositories and sync development progress
+- **📱 Responsive UI**: Mobile-friendly design with intuitive user interface
+- **🗄️ Database Integration**: MongoDB Atlas for scalable data storage
+- **🐳 Docker Containerization**: Consistent deployment across environments
+- **☁️ AWS Deployment**: Production-ready deployment on EC2
+
+## 🛠️ Technology Stack
+
+### Frontend
+- **React 18** with TypeScript
+- **SCSS** for styling
+- **React Router** for navigation
+- **Axios** for API communication
+
+### Backend
+- **Node.js** with Express
+- **Mongoose** for MongoDB interaction
+- **JWT** for authentication
+- **bcryptjs** for password hashing
+
+### Database & Services
+- **MongoDB Atlas** for data storage
+- **Google OAuth 2.0** for authentication
+- **GitHub API** for repository integration
+
+### DevOps & Deployment
+- **Docker** & Docker Compose
+- **AWS EC2** for hosting
+- **Nginx** for reverse proxy
+- **Git/GitHub** for version control
+
+## 📁 Project Structure
+
+```
+TaskFlow/
+├── client/                 # React TypeScript frontend
+│   ├── src/
+│   │   ├── components/     # Reusable React components
+│   │   ├── pages/         # Page components
+│   │   ├── services/      # API services
+│   │   ├── context/       # React context (auth, etc.)
+│   │   └── utils/         # Utility functions
+│   ├── public/            # Static files
+│   ├── package.json
+│   └── Dockerfile
+├── server/                 # Node.js Express backend
+│   ├── controllers/       # Request handlers
+│   ├── models/           # Mongoose models
+│   ├── routes/           # API routes
+│   ├── middleware/       # Express middleware
+│   ├── services/         # External service integrations
+│   ├── config/           # Configuration files
+│   ├── package.json
+│   └── Dockerfile
+├── docker-compose.yml
+└── docs/                  # Documentation
+```
+
+## 🚀 Quick Start
 
 ### Prerequisites
 
-- Node.js v14+
-- npm v6+
-- MongoDB account (for MongoDB Atlas)
-- Google Developer account (for OAuth)
-- GitHub account (for API integration)
-- Docker (optional, for containerized deployment)
+- **Node.js** v18+
+- **npm** v8+
+- **Docker** & Docker Compose
+- **MongoDB Atlas** account
+- **Google Developer** account
+- **GitHub** account
+- **AWS Account** (for deployment)
 
-### GitHub OAuth Setup
+### Local Development Setup
 
-TaskFlow integrates with GitHub to connect repositories and sync issues with tasks. To enable GitHub integration:
-
-#### 1. Create a GitHub OAuth App
-
-1. Go to [GitHub Developer Settings](https://github.com/settings/developers)
-2. Click **"OAuth Apps"** in the left sidebar
-3. Click **"New OAuth App"**
-4. Fill in the application details:
-   - **Application name**: `TaskFlow` (or your preferred name)
-   - **Homepage URL**: `http://localhost:3000` (for local development)
-   - **Application description**: `Project management platform for student teams`
-   - **Authorization callback URL**: `http://localhost:3000/github/callback`
-
-5. Click **"Register application"**
-6. Copy the **Client ID** and **Client Secret** (you'll need these for your environment variables)
-
-#### 2. Configure Environment Variables
-
-Add the GitHub OAuth credentials to your backend `.env` file:
-
-```bash
-# GitHub OAuth Configuration
-GITHUB_CLIENT_ID=your_github_client_id_here
-GITHUB_CLIENT_SECRET=your_github_client_secret_here
-
-# Frontend URL for OAuth redirects
-CLIENT_URL=http://localhost:3000
-```
-
-#### 3. Production Setup
-
-For production deployment, update your GitHub OAuth App:
-
-1. Edit your GitHub OAuth App
-2. Update the **Homepage URL** to your production domain
-3. Update the **Authorization callback URL** to: `https://yourdomain.com/github/callback`
-4. Update your production `.env` with:
+1. **Clone the repository**
    ```bash
-   CLIENT_URL=https://yourdomain.com
-   ```
-
-### Basic Commands
-
-```bash
-   # For Python Setup
-   sudo apt-get update
-   sudo apt-get upgrade
-   sudo apt install python3-pip
-   sudo apt install python3.12-venv
-   python3 -m venv venv
-   source venv/bin/activate
-   pip install Flask
-
-   # For Docker Installation
-   sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
-   sudo mkdir -p /etc/apt/trusted.gpg.d
-   curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo tee /etc/apt/trusted.gpg.d/docker.gpg > /dev/null
-   sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
-   sudo apt-get install -y docker-ce
-   sudo usermod -aG docker $USER
-   sudo docker run hello-world
-
-   # For Git and GitHub Setup
-   sudo apt-get install git
-   git config --global user.name "Your user name"
-   git config --global user.email "Your user email" 
-   git init
-   git add <file_name>
-   git commit -m "Your commit message"
-   git push origin <branch_name>
-   git pull
-   git status
-
-   # Checking Versions
-   flask --version
-   docker --version
-   git --version
-   ```
-
-### Environment Setup for Team Collaboration
-
-#### MongoDB Atlas Setup
-
-Our project uses MongoDB Atlas as the database. To connect to our shared development database:
-
-1. Request access to the shared MongoDB Atlas cluster from a team member
-2. You will receive the connection string in this format:
-
-   ```plaintext
-   mongodb+srv://<username>:<password>@<cluster>.mongodb.net/taskflow
-   ```
-
-3. Replace `<username>` and `<password>` with the credentials provided to you
-
-#### Google OAuth Setup
-
-For Google authentication integration:
-
-1. Request access to the shared Google Cloud project from a team member
-2. You will be provided with the Google Client ID
-3. For local development, make sure to use `http://localhost:3000` in your browser
-
-### Local Development
-
-1. Clone the repository
-
-   ```plaintext
    git clone https://github.com/chongwongus/TaskFlow-student-project-management.git
    cd TaskFlow-student-project-management
    ```
 
-2. Frontend setup
-
+2. **Backend setup**
    ```bash
-   # Navigate to frontend directory
-   cd client
-   
-   # Install dependencies
+   cd server
    npm install
    
-   # Create .env file
+   # Create environment file
    cp .env.example .env
    ```
 
-3. Update the frontend `.env` file with your credentials:
-
-   ```plaintext
-   REACT_APP_API_URL=http://localhost:5000/api
-   REACT_APP_GOOGLE_CLIENT_ID=<your_google_client_id>
-   ```
-
-4. Backend setup
-
+3. **Configure backend environment variables**
    ```bash
-   # Navigate to backend directory
-   cd ../server
-   
-   # Install dependencies
-   npm install
-   
-   # Create .env file
-   cp .env.example .env
-   ```
-
-5. Update the backend `.env` file with your credentials:
-
-   ```plaintext
+   # server/.env
    NODE_ENV=development
    PORT=5000
    MONGODB_URI=mongodb+srv://<username>:<password>@<cluster>.mongodb.net/taskflow
-   JWT_SECRET=<your_jwt_secret_key>
+   JWT_SECRET=your_super_secret_jwt_key_here
    JWT_EXPIRE=30d
-   GOOGLE_CLIENT_ID=<your_google_client_id>
-   GITHUB_CLIENT_ID=<your_github_client_id>
-   GITHUB_CLIENT_SECRET=<your_github_client_secret>
+   GOOGLE_CLIENT_ID=your_google_client_id
+   GITHUB_CLIENT_ID=your_github_client_id
+   GITHUB_CLIENT_SECRET=your_github_client_secret
    CLIENT_URL=http://localhost:3000
    ```
 
-6. Start the development servers
-
-   Backend:
-
+4. **Frontend setup**
    ```bash
-   # In the backend directory
-   cd server
-   npm run dev
+   cd ../client
+   npm install
+   
+   # Create environment file
+   cp .env.example .env
    ```
 
-   Frontend:
-
+5. **Configure frontend environment variables**
    ```bash
-   # In the frontend directory
-   cd client
+   # client/.env
+   REACT_APP_API_URL=http://localhost:5000/api
+   REACT_APP_GOOGLE_CLIENT_ID=your_google_client_id
+   ```
+
+6. **Start development servers**
+   ```bash
+   # Backend (in server directory)
+   npm run dev
+   
+   # Frontend (in client directory)
    npm start
    ```
 
-7. Access the application at `http://localhost:3000`
+7. **Access the application**
+   - Frontend: `http://localhost:3000`
+   - Backend: `http://localhost:5000`
 
-### Using GitHub Integration
+## 🔑 External Service Configuration
 
-Once you have GitHub OAuth configured:
+### MongoDB Atlas Setup
 
-1. **Connect Your GitHub Account**:
-   - Navigate to any project you own
-   - Click "Connect GitHub Repository" 
-   - You'll be redirected to GitHub for authorization
-   - After authorizing, you'll be redirected back to TaskFlow
+1. Create a [MongoDB Atlas](https://cloud.mongodb.com) account
+2. Create a new cluster (free tier available)
+3. Create a database user with read/write permissions
+4. Get the connection string and replace `<username>` and `<password>`
+5. Whitelist your IP address in Network Access
 
-2. **Link a Repository**:
-   - Select a repository from your GitHub account
-   - Click "Connect" to link it to your project
-   - The repository will appear in your project details
+### Google OAuth Setup
 
-3. **Future Features** (coming soon):
-   - Sync GitHub issues with TaskFlow tasks
-   - View commit history and repository stats
-   - Create GitHub issues from TaskFlow tasks
+1. Go to [Google Cloud Console](https://console.cloud.google.com)
+2. Create a new project or select existing
+3. Enable the Google+ API
+4. Create OAuth 2.0 credentials:
+   - **Application type**: Web application
+   - **Authorized origins**: `http://localhost:3000`, `http://YOUR_DOMAIN`
+   - **Authorized redirect URIs**: `http://localhost:3000/auth/google/callback`
+5. Copy the Client ID to your environment variables
 
-### Running with Docker (Optional)
+### GitHub OAuth Setup
 
-If you prefer using Docker for development:
+1. Go to [GitHub Developer Settings](https://github.com/settings/developers)
+2. Click **"OAuth Apps"** → **"New OAuth App"**
+3. Fill in application details:
+   - **Application name**: TaskFlow
+   - **Homepage URL**: `http://localhost:3000`
+   - **Authorization callback URL**: `http://localhost:3000/github/callback`
+4. Copy Client ID and Client Secret to your environment variables
 
-1. Build server image in the server directory
+## 🐳 Docker Deployment
 
-```plaintext
-docker build -t taskflow-server ./server
-```
+### Building Docker Images
 
-2. Build the client Docker image
+1. **Create Dockerfiles**
 
-```plaintext
-docker build -t taskflow-client ./client
-```
+   **Client Dockerfile** (`client/Dockerfile`):
+   ```dockerfile
+   # Build stage
+   FROM node:18-alpine as build
+   WORKDIR /app
+   COPY package*.json ./
+   RUN npm ci
+   COPY . .
+   RUN npm run build
 
-3. Build and run the Docker containers
-
-   ```plaintext
-   docker-compose up --build
+   # Production stage
+   FROM nginx:alpine
+   COPY --from=build /app/build /usr/share/nginx/html
+   EXPOSE 80
+   CMD ["nginx", "-g", "daemon off;"]
    ```
 
-4. Access the application at `http://localhost:3000`
+   **Server Dockerfile** (`server/Dockerfile`):
+   ```dockerfile
+   FROM node:18-alpine
+   WORKDIR /app
+   COPY package*.json ./
+   RUN npm ci
+   COPY . .
+   EXPOSE 5000
+   CMD ["npm", "start"]
+   ```
 
-sudo docker rmi -f $(sudo docker images -q)
-sudo docker stop $(sudo docker ps -a -q) && sudo docker rm $(sudo docker ps -a -q)
+2. **Docker Compose Configuration** (`docker-compose.yml`):
+   ```yaml
+   services:
+     taskflow-server:
+       image: YOUR_DOCKERHUB_USERNAME/taskflow-server:latest
+       container_name: taskflow-server
+       restart: unless-stopped
+       ports:
+         - "5000:5000"
+       environment:
+         - NODE_ENV=production
+         - PORT=5000
+       env_file:
+         - ./server/.env.production
+       volumes:
+         - server_logs:/app/logs
+       networks:
+         - taskflow-network
+       healthcheck:
+         test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+         interval: 30s
+         timeout: 10s
+         retries: 3
+         start_period: 40s
+        
+     taskflow-client:
+       image: YOUR_DOCKERHUB_USERNAME/taskflow-client:latest
+       container_name: taskflow-client
+       restart: unless-stopped
+       ports:
+         - "80:80"
+       depends_on:
+         taskflow-server:
+           condition: service_healthy
+       volumes:
+         - client_logs:/var/log/nginx
+       networks:
+         - taskflow-network
+       healthcheck:
+         test: ["CMD", "curl", "-f", "http://localhost/"]
+         interval: 30s
+         timeout: 10s
+         retries: 3
+         start_period: 40s
+        
+   networks:
+     taskflow-network:
+       driver: bridge
+      
+   volumes:
+     server_logs:
+     client_logs:
+   ```
 
-## Secure Credential Sharing for Team Members
+3. **Build and Push Images**
+   ```bash
+   # Build images
+   docker build -t YOUR_DOCKERHUB_USERNAME/taskflow-server:latest ./server
+   docker build -t YOUR_DOCKERHUB_USERNAME/taskflow-client:latest ./client
+   
+   # Push to Docker Hub
+   docker login
+   docker push YOUR_DOCKERHUB_USERNAME/taskflow-server:latest
+   docker push YOUR_DOCKERHUB_USERNAME/taskflow-client:latest
+   ```
 
-To securely share credentials within the team:
+### Local Docker Development
 
-1. **Never commit .env files** containing actual credentials to the repository
-2. Use the provided `.env.example` files as templates
-3. Share actual credentials through secure channels:
-   - Password manager (LastPass, 1Password, etc.)
-   - Encrypted messaging (Signal, WhatsApp)
-   - Secure team communication tools (Slack direct messages)
-4. Each team member should maintain their own `.env` files with the shared credentials
-5. If you need access to credentials, contact one of the team **TaskFlow** members
+```bash
+# Run with docker-compose
+docker-compose up --build
 
-## API Endpoints
+# Run in background
+docker-compose up -d
 
-### Authentication
+# View logs
+docker-compose logs -f
 
+# Stop containers
+docker-compose down
+```
+
+## ☁️ AWS EC2 Deployment
+
+### Step 1: Launch EC2 Instance
+
+1. **Go to AWS Console** → EC2 → Launch Instance
+2. **Choose AMI**: Ubuntu Server 22.04 LTS (Free Tier)
+3. **Instance Type**: t2.micro (Free Tier) or t2.small
+4. **Key Pair**: Create new or use existing
+5. **Security Group**: Configure with these rules:
+   ```
+   Type        Port    Source          Description
+   SSH         22      Your IP         SSH access
+   HTTP        80      0.0.0.0/0       Frontend access  
+   Custom TCP  5000    0.0.0.0/0       Backend API
+   ```
+6. **Storage**: 8GB (default)
+7. **Launch Instance**
+
+### Step 2: Connect and Configure EC2
+
+```bash
+# Connect to EC2
+ssh -i your-key.pem ubuntu@YOUR_EC2_IP
+
+# Update system
+sudo apt-get update && sudo apt-get upgrade -y
+
+# Install Docker
+sudo apt-get install -y apt-transport-https ca-certificates curl software-properties-common
+curl -fsSL https://download.docker.com/linux/ubuntu/gpg | sudo apt-key add -
+sudo add-apt-repository "deb [arch=amd64] https://download.docker.com/linux/ubuntu $(lsb_release -cs) stable"
+sudo apt-get update && sudo apt-get install -y docker-ce
+
+# Install Docker Compose
+sudo curl -L "https://github.com/docker/compose/releases/latest/download/docker-compose-$(uname -s)-$(uname -m)" -o /usr/local/bin/docker-compose
+sudo chmod +x /usr/local/bin/docker-compose
+
+# Add user to docker group
+sudo usermod -aG docker ubuntu
+newgrp docker
+
+# Verify installation
+docker --version && docker-compose --version
+```
+
+### Step 3: Deploy Application
+
+```bash
+# Clone repository
+git clone https://github.com/chongwongus/TaskFlow-student-project-management.git
+cd TaskFlow-student-project-management
+
+# Create production environment file
+cat > server/.env.production << EOF
+NODE_ENV=production
+PORT=5000
+MONGODB_URI=mongodb+srv://username:password@cluster.mongodb.net/taskflow
+JWT_SECRET=your_super_secret_jwt_key_here
+JWT_EXPIRE=30d
+GOOGLE_CLIENT_ID=your_google_client_id
+GITHUB_CLIENT_ID=your_github_client_id
+GITHUB_CLIENT_SECRET=your_github_client_secret
+EOF
+
+# Update docker-compose.yml with your Docker Hub username
+# Pull and start containers
+docker-compose pull
+docker-compose up -d
+
+# Check status
+docker-compose ps
+```
+
+### Step 4: Configure Production URLs
+
+Update these files for production:
+
+1. **Client API Configuration** (`client/src/services/api.tsx`):
+   ```typescript
+   const API_URL = process.env.NODE_ENV === 'production'
+     ? 'http://YOUR_EC2_IP:5000/api'
+     : 'http://localhost:5000/api';
+   ```
+
+2. **Server CORS Configuration** (`server/server.js`):
+   ```javascript
+   app.use(cors({
+     origin: process.env.NODE_ENV === 'production' 
+       ? [
+           'http://YOUR_EC2_IP',
+           'http://YOUR_EC2_IP:80',
+           'https://YOUR_EC2_IP'
+         ]
+       : 'http://localhost:3000',
+     credentials: true,
+     methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+     allowedHeaders: ['Content-Type', 'Authorization']
+   }));
+   ```
+
+3. **Update OAuth Redirect URLs**:
+   - Google OAuth: Add `http://YOUR_EC2_IP` to authorized origins
+   - GitHub OAuth: Update callback to `http://YOUR_EC2_IP/github/callback`
+
+### Step 5: SSL/HTTPS Setup (Recommended)
+
+For production, set up SSL with Let's Encrypt:
+
+```bash
+# Install Nginx and Certbot
+sudo apt-get install -y nginx certbot python3-certbot-nginx
+
+# Configure Nginx reverse proxy
+sudo nano /etc/nginx/sites-available/taskflow
+
+# Enable site and get SSL certificate
+sudo ln -s /etc/nginx/sites-available/taskflow /etc/nginx/sites-enabled/
+sudo certbot --nginx -d your-domain.com
+```
+
+## 🧪 Testing
+
+### API Testing
+```bash
+# Test server health
+curl http://YOUR_EC2_IP:5000/
+
+# Test registration
+curl -X POST http://YOUR_EC2_IP:5000/api/auth/register \
+  -H "Content-Type: application/json" \
+  -d '{"name":"Test User","email":"test@example.com","password":"password123"}'
+```
+
+### Frontend Testing
+1. Navigate to `http://YOUR_EC2_IP`
+2. Test user registration and login
+3. Create a project and add tasks
+4. Verify all features work correctly
+
+### Automated Testing
+```bash
+# Backend tests
+cd server && npm test
+
+# Frontend tests  
+cd client && npm test
+```
+
+## 📊 API Documentation
+
+### Authentication Endpoints
 - `POST /api/auth/register` - User registration
 - `POST /api/auth/login` - User login
 - `POST /api/auth/google` - Google OAuth login
-- `GET /api/auth/me` - Get current user
+- `GET /api/auth/me` - Get current user profile
 
-### Projects
+### Project Management
+- `GET /api/projects` - Get user's projects
+- `POST /api/projects` - Create new project
+- `GET /api/projects/:id` - Get project details
+- `PUT /api/projects/:id` - Update project
+- `DELETE /api/projects/:id` - Delete project
+- `POST /api/projects/:id/members` - Add team member
 
-- `GET /api/projects` - Get all projects for user
-- `POST /api/projects` - Create a new project
-- `GET /api/projects/:id` - Get a specific project
-- `PUT /api/projects/:id` - Update a project
-- `DELETE /api/projects/:id` - Delete a project
-- `POST /api/projects/:id/members` - Add a member to a project
-
-### Tasks
-
-- `GET /api/tasks/project/:projectId` - Get all tasks for a project
-- `POST /api/tasks` - Create a new task
-- `GET /api/tasks/:id` - Get a specific task
-- `PUT /api/tasks/:id` - Update a task
-- `DELETE /api/tasks/:id` - Delete a task
+### Task Management  
+- `GET /api/tasks/project/:projectId` - Get project tasks
+- `POST /api/tasks` - Create new task
+- `GET /api/tasks/:id` - Get task details
+- `PUT /api/tasks/:id` - Update task
+- `DELETE /api/tasks/:id` - Delete task
 
 ### GitHub Integration
-
-- `GET /api/github/auth-url` - Get GitHub OAuth authorization URL
-- `POST /api/github/token` - Exchange OAuth code for access token
-- `GET /api/github/status` - Check GitHub connection status
-- `DELETE /api/github/disconnect` - Disconnect GitHub account
-- `GET /api/github/repositories` - Get user's GitHub repositories
+- `GET /api/github/repositories` - Get user repositories
 - `GET /api/github/repository/:owner/:repo` - Get repository details
-- `GET /api/github/repository/:owner/:repo/issues` - Get repository issues
-- `POST /api/projects/:id/github` - Connect GitHub repository to project
+- `POST /api/projects/:id/github` - Connect repository to project
 
-## Testing
+## 🛠️ Troubleshooting
 
-Run tests with:
+### Common Issues
 
+#### CORS Errors
+- Verify `CLIENT_URL` is set correctly in backend `.env`
+- Check that frontend API URL matches backend URL
+- Ensure EC2 security group allows the required ports
+
+#### Docker Container Issues
 ```bash
-# Backend tests
-cd backend
-npm test
+# Check container status
+docker-compose ps
 
-# Frontend tests
-cd frontend
-npm test
+# View container logs
+docker-compose logs service-name
+
+# Restart containers
+docker-compose restart
+
+# Rebuild containers
+docker-compose down && docker-compose up --build -d
 ```
 
-## Troubleshooting
+#### Database Connection Issues
+- Verify MongoDB connection string format
+- Check that EC2 IP is whitelisted in MongoDB Atlas
+- Test connection with MongoDB Compass
 
-### MongoDB Connection Issues
+#### Authentication Issues
+- Verify Google/GitHub OAuth redirect URLs
+- Check that environment variables are set correctly
+- Ensure JWT secret is consistent across deployments
 
-- Verify your IP address is in the MongoDB Atlas whitelist
-- Check that your username and password are correct
-- Ensure the connection string format is correct
+### Performance Monitoring
+```bash
+# Check system resources
+htop
+df -h
 
-### Google OAuth Issues
+# Monitor Docker containers
+docker stats
 
-- Verify the correct Google Client ID is in your .env file
-- Ensure `http://localhost:3000` is added to authorized JavaScript origins
-- Check browser console for any CORS or authorization errors
+# View application logs
+docker-compose logs -f --tail=100
+```
 
-### GitHub OAuth Issues
+## 🔄 Deployment Updates
 
-- Verify the GitHub Client ID and Secret are correctly set in your `.env` file
-- Ensure the Authorization callback URL in your GitHub OAuth App matches exactly: `http://localhost:3000/github/callback`
-- Check that `CLIENT_URL` is set to `http://localhost:3000` in your backend `.env`
-- If you see "redirect_uri mismatch" errors, make sure there are no trailing slashes in your callback URL
+### Updating the Application
+```bash
+# Local: Build and push new images
+docker build -t YOUR_DOCKERHUB_USERNAME/taskflow-server:latest ./server
+docker build -t YOUR_DOCKERHUB_USERNAME/taskflow-client:latest ./client
+docker push YOUR_DOCKERHUB_USERNAME/taskflow-server:latest
+docker push YOUR_DOCKERHUB_USERNAME/taskflow-client:latest
 
-### API Connection Issues
+# EC2: Pull and restart
+ssh -i your-key.pem ubuntu@YOUR_EC2_IP
+cd TaskFlow-student-project-management
+docker-compose pull
+docker-compose down
+docker-compose up -d
+```
 
-- Verify the backend server is running on port 5000
-- Check that CORS is properly configured in the backend
-- Ensure the frontend is using the correct API URL
+### Backup and Maintenance
+```bash
+# Database backup (if using self-hosted MongoDB)
+mongodump --uri="your_mongodb_connection_string"
 
-## Contributing
+# Clean up Docker resources
+docker system prune -a
 
-This is a course project for TCSS 506. Contributions from team members are managed through GitHub issues and pull requests.
+# Update system packages
+sudo apt-get update && sudo apt-get upgrade -y
+```
 
-## License
+## 🔒 Security Best Practices
 
-MIT License
+1. **Environment Variables**: Never commit `.env` files with real credentials
+2. **AWS Security Groups**: Restrict access to specific IPs when possible
+3. **Strong Passwords**: Use complex passwords for all services
+4. **Regular Updates**: Keep Docker images and system packages updated
+5. **SSL/HTTPS**: Use SSL certificates in production
+6. **Database Security**: Enable MongoDB authentication and use Atlas for managed security
+7. **JWT Security**: Use strong, unique JWT secrets
+8. **API Rate Limiting**: Implement rate limiting for production APIs
 
-## Acknowledgements
+## 🤝 Contributing
 
-- Ling-Hong Hung, Research Assistant Professor, School of Engineering and Technology
+This is a course project for TCSS 506. For team members:
+
+1. **Fork the repository**
+2. **Create a feature branch**: `git checkout -b feature/amazing-feature`
+3. **Commit changes**: `git commit -m 'Add amazing feature'`
+4. **Push to branch**: `git push origin feature/amazing-feature`
+5. **Open a Pull Request**
+
+### Development Workflow
+- Use feature branches for new functionality
+- Write descriptive commit messages
+- Test thoroughly before submitting PRs
+- Update documentation for new features
+
+## 📄 License
+
+This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
+
+## 🎓 Academic Context
+
+This project was developed as part of:
+- **Course**: TCSS 506 - Practical Full Stack Development
+- **Institution**: University of Washington Tacoma
+- **Program**: Graduate Certificate in Software Development Engineering (GC-SDE)
+- **Quarter**: Spring 2025
+
+## 🙏 Acknowledgements
+
+- **Ling-Hong Hung** - Research Assistant Professor, School of Engineering and Technology
+- **Charlie LeWarne** - Course Support and Guidance
+- **MongoDB Atlas** - Database hosting
+- **Google Cloud Platform** - OAuth services
+- **GitHub** - Version control and API integration
+- **AWS** - Cloud hosting and deployment
+- **Docker** - Containerization platform
+
+## 📞 Support
+
+For technical support or questions:
+1. Check the [troubleshooting section](#-troubleshooting)
+2. Review container logs: `docker-compose logs service-name`
+3. Verify environment variables and configurations
+4. Contact team members for project-specific issues
+
+---
+
+**🚀 Ready to deploy? Follow the setup instructions above and get TaskFlow running in your environment!**
