@@ -15,8 +15,8 @@
   }
   
   .success-message {
-    background-color: #e8f5e9;
-    color: #2e7d32;
+    background-color: var(--background-color);
+    color: var(--success-color);
     padding: 1rem;
     border-radius: 6px;
     margin-bottom: 1rem;
@@ -89,8 +89,7 @@
         .filter-btn {
           padding: 0.5rem 1rem;
           border: 1px solid var(--border-color);
-          background-color: white;
-          border-radius: 6px;
+          background-color: var(--background-color);
           cursor: pointer;
           font-size: 0.85rem;
           transition: all 0.2s ease;
@@ -100,8 +99,8 @@
           }
           
           &.active {
-            background-color: var(--primary-color);
-            color: white;
+            background-color: var(--background-color);
+            color: var(--text-color);
             border-color: var(--primary-color);
           }
         }
@@ -127,7 +126,7 @@
     gap: 1rem;
     
     .issue-card {
-      background-color: white;
+      background-color: var(--background-color);
       border: 1px solid var(--border-color);
       border-radius: 8px;
       padding: 1.5rem;

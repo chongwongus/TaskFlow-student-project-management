@@ -8,7 +8,7 @@ const axios = require('axios');
 exports.getGithubAuthUrl = async (req, res) => {
   try {
     const clientId = process.env.GITHUB_CLIENT_ID;
-    const redirectUri = `http://3.92.255.222/github/callback`; // Frontend route
+    const redirectUri = `http://13.220.160.13/github/callback`; // Frontend route
     const scope = 'repo,user:email';
     const state = req.user.id; // Use user ID as state for security
     

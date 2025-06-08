@@ -57,8 +57,7 @@
     .empty-state {
       text-align: center;
       padding: 3rem;
-      background-color: var(--light-background);
-      border-radius: 8px;
+      background-color: var(--background-color);
       margin-top: 2rem;
       
       p {
@@ -71,8 +70,7 @@
     .no-results {
       text-align: center;
       padding: 3rem;
-      background-color: var(--light-background);
-      border-radius: 8px;
+      background-color: var(--background-color);
       margin-top: 1rem;
       
       p {
@@ -621,7 +619,7 @@
       }
       
       .empty-state {
-        background-color: white;
+        background-color: var(--background-color);
         padding: 2rem;
         border-radius: 8px;
         text-align: center;
