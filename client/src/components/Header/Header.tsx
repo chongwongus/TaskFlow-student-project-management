@@ -11,8 +11,6 @@ const Header: React.FC = () => {
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);
   
-  // Always show the header now
-  
   const toggleMenu = () => {
     setMenuOpen(!menuOpen);
   };
@@ -21,10 +19,6 @@ const Header: React.FC = () => {
     logout();
     setMenuOpen(false);
     navigate('/'); // Redirect to landing page after logout
-  };
-
-  const handleUserPreferences = () => {
-    navigate('/userPreference'); // Redirect to landing page after logout
   };
 
   // Function to determine if we're on a project detail page
@@ -54,6 +48,7 @@ const Header: React.FC = () => {
               TaskFlow
             </Link>
           </div>
+          
           {/* Show back button on project detail pages */}
           {isAuthenticated && isProjectDetailPage() && getBackToProjectsLink()}
         </div>
@@ -67,6 +62,13 @@ const Header: React.FC = () => {
               >
                 Projects
               </Link>
+              
+              {/* Theme Toggle Button */}
+              <ThemeToggle 
+                DarkTheme={DarkTheme} 
+                LightTheme={LightTheme} 
+                userEmail={user?.email}
+              />
               
               {/* Add a visible logout button */}
               <button 
@@ -100,10 +102,7 @@ const Header: React.FC = () => {
                       <button onClick={handleLogout} className="logout-button">
                         Logout
                       </button>
-                      <button onClick={handleUserPreferences} className="logout-button">
-                        User Preference
-                        </button>
-                        </div>
+                    </div>
                   </div>
                 )}
               </div>
@@ -122,6 +121,12 @@ const Header: React.FC = () => {
               >
                 Register
               </Link>
+              
+              {/* Theme Toggle for non-authenticated users too */}
+              <ThemeToggle 
+                DarkTheme={DarkTheme} 
+                LightTheme={LightTheme} 
+              />
             </>
           )}
         </nav>

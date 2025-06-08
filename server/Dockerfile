@@ -1,18 +1,32 @@
-# Use Node.js LTS as the base image
-FROM node:18-slim
+# Backend Dockerfile (server/Dockerfile)
+FROM node:18-alpine
 
 # Set working directory
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Copy package files
 COPY package*.json ./
-RUN npm install --production
 
-# Copy the rest of the server code
+# Install dependencies
+RUN npm ci --only=production
+
+# Copy source code
 COPY . .
 
-# Expose backend port
+# Create a non-root user
+RUN addgroup -g 1001 -S nodejs
+RUN adduser -S nodejs -u 1001
+
+# Change ownership of the app directory
+RUN chown -R nodejs:nodejs /app
+USER nodejs
+
+# Expose port
 EXPOSE 5000
 
-# Start the server
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD node -e "require('http').get('http://localhost:5000/', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"
+
+# Start the application
 CMD ["npm", "start"]

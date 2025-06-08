@@ -1,22 +1,50 @@
-# Use Node.js LTS as the base image
-FROM node:18-slim AS build
+# Frontend Dockerfile (client/Dockerfile)
+# Build stage
+FROM node:18-alpine AS builder
 
-# Set working directory
 WORKDIR /app
 
-# Copy package files and install dependencies
+# Copy package files
 COPY package*.json ./
-RUN npm install
 
-# Copy the rest of the client code and build the app
+# Install dependencies
+RUN npm ci
+
+# Copy source code
 COPY . .
-RUN npm run build --prod
 
-# Use Nginx to serve the built app
+# Build the application
+RUN npm run build
+
+# Production stage
 FROM nginx:alpine
-COPY --from=build /app/build /usr/share/nginx/html
 
-# Expose frontend port
+# Copy custom nginx configuration
+COPY nginx.conf /etc/nginx/nginx.conf
+
+# Copy built application from builder stage
+COPY --from=builder /app/build /usr/share/nginx/html
+
+# Create a non-root user
+RUN addgroup -g 1001 -S nginx
+RUN adduser -S nginx -u 1001
+
+# Set ownership
+RUN chown -R nginx:nginx /usr/share/nginx/html
+RUN chown -R nginx:nginx /var/cache/nginx
+RUN chown -R nginx:nginx /var/log/nginx
+RUN chown -R nginx:nginx /etc/nginx/conf.d
+RUN touch /var/run/nginx.pid
+RUN chown -R nginx:nginx /var/run/nginx.pid
+
+USER nginx
+
+# Expose port 80
 EXPOSE 80
 
+# Health check
+HEALTHCHECK --interval=30s --timeout=3s --start-period=5s --retries=3 \
+  CMD curl -f http://localhost/ || exit 1
+
+# Start nginx
 CMD ["nginx", "-g", "daemon off;"]

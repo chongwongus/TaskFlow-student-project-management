@@ -5,6 +5,7 @@ import { setTheme } from '../../components/ThemeToggle/theme-toggle';
 import { userPreferenceService } from '../../services/api';
 import { DarkTheme, LightTheme } from '../../style/colors';
 import { useAuth } from '../../context/AuthContext';
+import ThemeToggle from '../../components/ThemeToggle/theme-toggle';
 
 interface FeatureCardProps {
   icon: string;
@@ -22,24 +23,45 @@ const FeatureCard: React.FC<FeatureCardProps> = ({ icon, title, description }) =
 
 const LandingPage: React.FC = () => {
   const darkThemeMq = window.matchMedia("(prefers-color-scheme: dark)");
+  const { user } = useAuth();
+  
+  // Check localStorage first, then system preference
+  const [darkTheme, setDarkTheme] = useState(() => {
+    const savedTheme = localStorage.getItem('theme');
+    if (savedTheme) {
+      return savedTheme === 'dark';
+    }
+    return darkThemeMq.matches;
+  });
 
-    const { user } = useAuth();
-  const [darkTheme, setDarkTheme] = useState(darkThemeMq.matches);
+  useEffect(() => {
+    const initializeTheme = async () => {
+      let themeToUse = darkTheme;
 
-    useEffect(() => {
-      const fetchUserPreference = async () => {
-        if (user?.email){
-          const response = await userPreferenceService.getUserPreference(user?.email || '');
-          console.log('User Preference:', response);
-          setDarkTheme(response?.data.theme === 'dark');
+      // If user is logged in, try to get their preference from the server
+      if (user?.email) {
+        try {
+          const response = await userPreferenceService.getUserPreference(user.email);
+          if (response?.data?.theme) {
+            themeToUse = response.data.theme === 'dark';
+            setDarkTheme(themeToUse);
+          }
+        } catch (error) {
+          console.log('Could not fetch user preference, using local storage or default');
         }
+      }
 
-        let theme = darkTheme ? DarkTheme : LightTheme;
-        setTheme(theme);
-      };
-      fetchUserPreference();
-    }, [darkTheme]);
-    
+      // Apply the theme
+      const theme = themeToUse ? DarkTheme : LightTheme;
+      setTheme(theme);
+      
+      // Save to localStorage for persistence
+      localStorage.setItem('theme', themeToUse ? 'dark' : 'light');
+    };
+
+    initializeTheme();
+  }, [user?.email, darkTheme]);
+
   const features: FeatureCardProps[] = [
     {
       icon: '📋',
@@ -73,6 +95,12 @@ const LandingPage: React.FC = () => {
         <nav className="nav-links">
           <Link to="/login" className="nav-link">Login</Link>
           <Link to="/register" className="nav-link btn-primary">Get Started</Link>
+          {/* Theme Toggle on Landing Page */}
+          <ThemeToggle 
+            DarkTheme={DarkTheme} 
+            LightTheme={LightTheme} 
+            userEmail={user?.email}
+          />
         </nav>
       </header>
 

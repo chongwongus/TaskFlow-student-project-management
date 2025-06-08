@@ -1,18 +1,58 @@
+# docker-compose.prod.yml
+version: '3.8'
+
 services:
-  server:
-    image: taskflow-server:latest
-    pull_policy: never
+  taskflow-server:
+    build:
+      context: ./server
+      dockerfile: Dockerfile
+    container_name: taskflow-server
+    restart: unless-stopped
     ports:
       - "5000:5000"
+    environment:
+      - NODE_ENV=production
+      - PORT=5000
     env_file:
-      - ./server/.env
-    restart: unless-stopped
+      - ./server/.env.production
+    volumes:
+      - server_logs:/app/logs
+    networks:
+      - taskflow-network
+    healthcheck:
+      test: ["CMD", "node", "-e", "require('http').get('http://localhost:5000/', (res) => { process.exit(res.statusCode === 200 ? 0 : 1) })"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
 
-  client:
-    image: taskflow-client:latest
-    pull_policy: never
-    ports:
-      - "3000:80"
-    env_file:
-      - ./client/.env
+  taskflow-client:
+    build:
+      context: ./client
+      dockerfile: Dockerfile
+    container_name: taskflow-client
     restart: unless-stopped
+    ports:
+      - "80:80"
+      - "443:443"
+    depends_on:
+      taskflow-server:
+        condition: service_healthy
+    volumes:
+      - client_logs:/var/log/nginx
+    networks:
+      - taskflow-network
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost/"]
+      interval: 30s
+      timeout: 10s
+      retries: 3
+      start_period: 40s
+
+networks:
+  taskflow-network:
+    driver: bridge
+
+volumes:
+  server_logs:
+  client_logs:

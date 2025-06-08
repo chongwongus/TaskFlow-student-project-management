@@ -29,17 +29,16 @@ export const LightTheme: Theme = {
 }
 
 export const DarkTheme: Theme = {
-    primaryColor: "#5c6bc0",
-    primaryDark: "#3949ab",
-    primaryLight: "#8e99f3",
-    backgroundColor: "#2e3440", // lighter dark grey
-    lightBackgroundColor: "#3b4252", // lighter than backgroundColor
-    fontColor: "#eceff4",
-    secondaryColor: "#434c5e",
-    ternaryColor: "#4c566a",
-    successColor: "#43a047",
-    warningColor: "#ffa000",
-    dangerColor: "#e53935",
-    infoColor: "#1e88e5"
+    primaryColor: "#6c7fff", // Brighter, more vibrant blue
+    primaryDark: "#5a6cfa", // Slightly darker but still bright
+    primaryLight: "#9ca8ff", // Light blue for accents
+    backgroundColor: "#1a1a1a", // Much darker background for better contrast
+    lightBackgroundColor: "#2a2a2a", // Lighter cards/sections
+    fontColor: "#ffffff", // Pure white text for maximum readability
+    secondaryColor: "#333333", // Medium gray for secondary backgrounds
+    ternaryColor: "#4a4a4a", // Lighter gray for borders/dividers
+    successColor: "#4ade80", // Brighter green
+    warningColor: "#fbbf24", // Brighter yellow/orange
+    dangerColor: "#f87171", // Brighter red
+    infoColor: "#60a5fa" // Brighter blue for info
 }
-

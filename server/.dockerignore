@@ -1,0 +1,16 @@
+# server/.dockerignore
+node_modules
+npm-debug.log
+.env
+.env.local
+.env.development
+.git
+.gitignore
+README.md
+Dockerfile
+.dockerignore
+coverage
+.nyc_output
+.DS_Store
+*.log
+logs
