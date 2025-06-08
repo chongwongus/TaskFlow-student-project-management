@@ -16,14 +16,14 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.NODE_ENV === 'production' 
-    ? ['http://34.230.44.202:3000', 'https://34.230.44.202:3000', 'http://34.230.44.202', 'https://34.230.44.202']  // Remove trailing slashes
-    : 'http://localhost:3000',
+  origin: true,  // Allow all origins
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
-  exposedHeaders: ['Content-Type', 'Authorization']
+  allowedHeaders: ['Content-Type', 'Authorization']
 }));
+
+
+
 app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 

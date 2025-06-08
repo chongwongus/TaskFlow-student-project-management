@@ -26,10 +26,10 @@ const AuthContext = createContext<AuthContextType>({
   loading: true,
   error: null,
   isAuthenticated: false,
-  login: async () => {},
-  googleLogin: async () => {},
-  register: async () => {},
-  logout: () => {},
+  login: async () => { },
+  googleLogin: async () => { },
+  register: async () => { },
+  logout: () => { },
 });
 
 // Custom hook to use auth context
@@ -48,7 +48,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   useEffect(() => {
     const checkUserLoggedIn = async () => {
       const token = localStorage.getItem('token');
-      
+
       if (token) {
         try {
           const response = await authService.getProfile();
@@ -59,10 +59,10 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
           setError('Session expired. Please login again.');
         }
       }
-      
+
       setLoading(false);
     };
-    
+
     checkUserLoggedIn();
   }, []);
 
@@ -72,7 +72,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setError(null);
       const response = await authService.login({ email, password });
       const { token, user } = response.data;
-      
+
       localStorage.setItem('token', token);
       setUser(user);
     } catch (err: any) {
@@ -88,7 +88,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
       setError(null);
       const response = await authService.googleLogin(tokenId);
       const { token, user } = response.data;
-      
+
       localStorage.setItem('token', token);
       setUser(user);
     } catch (err: any) {
@@ -102,18 +102,33 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
   const register = async (name: string, email: string, password: string) => {
     try {
       setError(null);
+      console.log('Attempting registration...', { name, email }); // Debug log
+
       const response = await authService.register({ name, email, password });
+      console.log('Registration response:', response); // Debug log
+
       const { token, user } = response.data;
-      
+
       localStorage.setItem('token', token);
       setUser(user);
     } catch (err: any) {
       console.error('Registration error:', err);
-      setError(err.response?.data?.message || 'Failed to register. Please try again.');
+
+      // Better error handling
+      let errorMessage = 'Failed to register. Please try again.';
+
+      if (err.response?.data?.message) {
+        errorMessage = err.response.data.message;
+      } else if (err.message) {
+        errorMessage = err.message;
+      } else if (err.code === 'ERR_NETWORK') {
+        errorMessage = 'Network error. Please check your connection.';
+      }
+
+      setError(errorMessage);
       throw err;
     }
   };
-
   // Logout function
   const logout = () => {
     localStorage.removeItem('token');

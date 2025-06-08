@@ -1,7 +1,7 @@
 import axios, { AxiosRequestConfig, InternalAxiosRequestConfig } from 'axios';
 
 const API_URL = process.env.NODE_ENV === 'production'
-  ? 'http://34.230.44.202:5000/api'  // Make sure this matches your server's exposed port
+  ? 'http://3.92.255.222:5000/api'  // Your EC2 IP
   : 'http://localhost:5000/api';
 
 // Define types
